@@ -104,7 +104,7 @@
             }
 
 
-            socket.emit('message',{to:document.getElementById('memberId').value,info:document.getElementById('message').value},function(result){
+            socket.emit('message',{to:<%= parent%>,info:document.getElementById('message').value},function(result){
                 if(result){
                     alert(result);
                 }
@@ -114,7 +114,7 @@
 
         //获取与当前人员的聊天记录
         function getHistoryMessage(to){
-            var to = to || document.getElementById('otherId').value;
+            var to = <%= parent%>
             if(!id){
                 return alert('您暂时还没连接!');
             }

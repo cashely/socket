@@ -72,7 +72,7 @@ module.exports = {
                 addUser({
                     phone:req.query.phone,
                     password:req.query.password,
-                    wxName:defaultName[~~(Math.random()*defaultName.length)]
+                    wxName:req.query.name || defaultName[~~(Math.random()*defaultName.length)]
                 })
                 .then((result)=>{
                     res.json({

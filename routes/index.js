@@ -21,8 +21,11 @@ function getUserInfo(code,from){
                                                    parent:from
                                                })
                                                .then((saveResult)=>{
-                                                   console.log('保存了的用户信息:',saveResult);
-                                                   return saveResult;
+                                                    console.log('保存了的用户信息:',saveResult);
+                                                    return updateMasterFriends(saveResult._id,from)
+                                                    .then((result)=>{
+                                                        return saveResult;
+                                                    });
                                                })
                                         })
                             }else{
@@ -74,6 +77,28 @@ function saveUserInfo(obj){
     })
 }
 
+function updateMasterFriends(id,whoId){
+    user.findOne().where({_id:id}).exec((err,result)=>{
+        if(err){
+            throw new Error(err);
+        }else{
+            if(!!result){
+                if(result.frineds.indexof(whoId)=== -1){
+                    result.frineds.push(whoId);
+                    result.markModified('frineds');
+                    result.save((err,_r)=>{
+                        if(err){
+                            throw new Error(err);
+                        }else{
+                            return _r;
+                        }
+                    })
+                }
+            }
+        }
+    })
+}
+
 function getUserInfoFromDb(openId){
     return user
             .find()
@@ -122,7 +147,7 @@ module.exports = (req,res,next)=>{
 
         getUserInfo(req.query.code,req.query.from)
             .then((userInfo)=>{
-                res.render('index',{title:userInfo.wxName,id:userInfo._id});
+                res.render('index',{title:userInfo.wxName,id:userInfo._id,parent:userInfo.parent});
             })
     }
 }

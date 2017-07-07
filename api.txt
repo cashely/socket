@@ -1,0 +1,99 @@
+#接口说明#
+
+###全局说明###
+
+    统一返回数据格式
+    {
+        statu:0-请求出错、1-请求成功
+        msg:请求响应的相关信息
+        datas:请求返回的数据,单字段返回string类型,列表形式返回数组对象
+    }
+
+
+1、微信后台域名验证
+    /MP_verify_WJGBT4nlrlvDmcg7.txt
+2、用户获取会话token,最终会返回jwt格式的加密字符串，里面包含用户id字段
+    /token/user/:id
+        method:GET
+        params:{
+            id:required
+        }
+3、药师获取会话token
+    /token/master/:phone/:password
+        method:GET,
+        params:{
+            phone:required,
+            password:required
+        }
+4、用户登录
+    /login/:id
+        method:POST,
+        params:{
+            id:required
+        }
+5、断开用户状态
+    /leave/:id
+        mathod:POST,
+        params:{
+            id:required
+        }
+6、获取用户离线会话
+    /offLineMessage/:id
+        method:GET,
+        params:{
+            id:required
+        }
+7、通过code获取当前用户信息,首页会自动重定向到微信换取code
+    /getUserInfo
+        method:GET,
+        params:{
+            code:required
+        }
+    注：非规范接口
+8、手动添加用户(非必须),通过微信授权自动注册用户
+    /addUser
+    method:PUT,
+    params:{
+        wId:required,
+        wName:required,
+        wImage:required
+    }
+9、注册药师
+    /addMaster
+    method:PUT,
+    params:{
+        phone:required,
+        password:required
+        name:
+    }
+    注:非规范接口、目前传输跟存储的password字段非加密,需md5实现
+10、获取会话历史
+    /history
+    method:GET,
+    params:{
+        from:required,
+        to:required
+    }
+11、评价
+    /star/:id
+    method:POST,
+    params:{
+        id:required,
+        num:required
+    }
+12、获取评价
+    /star/:id
+    method:GET,
+    params:{
+        id:required
+    }
+13、编辑用户信息
+    /editUserInfo/:id
+    method:POST,
+    params:{
+        id:required,
+        phone:required,
+        name:required,
+        sex:required,
+        hospitalId:required
+    }
