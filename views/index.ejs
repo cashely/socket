@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="/javascripts/socket.io.js"></script>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <input type="text" id="id" style="width:600px"/>
+    <button onClick="connect()">链接实时聊天室</button>
+
+    <input type="text" placeholder="<%= id%>" id="memberId"/>
+    <input type="text" placeholder="请输入发送内容" id="message" />
+    <button onClick="sendUserMessage()">发送信息</button>
+
+    <input type="text" placeholder="对方_id" id="otherId" />
+    <button onClick="getHistoryMessage()">获取聊天记录</button>
+    <script>
+        function getToken(){
+            return fetch('/token/user/<%= id%>',{method:'GET'}).then((result)=>{
+                return result.json();
+            })
+        }
+
+        var socket,id;
+        function connect(){
+            if(!!socket){
+                return alert('您已经加入了聊天!');
+            }
+            //监听验证权限事件
+            getToken().then((result)=>{
+                if(result.statu === 0){
+                    return alert(result.msg);
+                }
+                socket = io.connect('http://192.168.1.194:3006',{path:'/socket'});
+                // console.log(socket);
+
+                socket.on('error',function(error){
+                    console.log(error);
+                });
+                socket.on("unauthorized", function(error, callback) {
+                    console.log(error);
+                  if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
+                    callback();
+                    console.log("token过期!");
+                  }
+                });
+
+                socket.on('connect',function(){
+                    console.log(socket);
+
+
+
+
+
+                })
+                socket.on('authenticated',function(){
+                    //监听连接事件
+
+                    socket.on('connectId',function(rid){
+                        // alert('您的昵称为:'+message.info);
+                        id = rid;
+                    });
+                    //监听消息
+                    socket.on('messages',function(message){
+                        alert('您收到来自'+message.from+'的消息:'+message.info);
+                    })
+
+                    //监听重新连接事件
+                    socket.on('reconnect',function(){
+                        console.log('断线重连!');
+                    })
+
+                    //监听其他用户登录事件
+
+                    socket.on('otherConnect',function(message){
+                        console.log(message);
+                    })
+
+                    //监听用户列表事件
+
+                    socket.on('userList',function(list){
+                        console.log(list);
+                    });
+
+
+                    //监听离线消息事件
+                    socket.on('offLineMessage',function(list){
+                        alert(list.length);
+                    })
+                })
+                socket.emit('authenticate',{token:result.datas})
+            })
+
+
+
+
+        }
+        function sendUserMessage(){
+            if(!socket){
+                return alert('还没有建立连接呢亲爱的!');
+            }
+
+
+            socket.emit('message',{to:document.getElementById('memberId').value,info:document.getElementById('message').value},function(result){
+                if(result){
+                    alert(result);
+                }
+            })
+        }
+
+
+        //获取与当前人员的聊天记录
+        function getHistoryMessage(to){
+            var to = to || document.getElementById('otherId').value;
+            if(!id){
+                return alert('您暂时还没连接!');
+            }
+            fetch(`/history?from=${id}&to=${to}`,{method:'GET'})
+                .then((result)=>{
+                    return result.json()
+                })
+                .then((result)=>{
+                    if(result.statu === 0){
+                        return alert(result.msg);
+                    }else{
+                        return alert(result.msg);
+                    }
+                })
+        }
+
+        connect();
+
+
+    </script>
+  </body>
+</html>
