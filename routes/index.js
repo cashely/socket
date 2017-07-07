@@ -23,15 +23,8 @@ function getUserInfo(code,from){
                                                                wxId:result.openid,
                                                                wxName:_userInfo.nickname,
                                                                wxImage:_userInfo.headimgurl,
+                                                               wxCode:code,
                                                                parent:from
-                                                           })
-                                                           .then((saveResult)=>{
-                                                               return updateCodeById(saveResult._id,code)
-                                                                       .then((result)=>{
-                                                                           return saveResult;
-                                                                       })
-
-
                                                            })
                                                            .then((saveResult)=>{
                                                                return updateMasterFriends(saveResult._id,from)
@@ -101,9 +94,9 @@ function updateMasterFriends(id,whoId){
             throw new Error(err);
         }else{
             if(!!result){
-                if(result.frineds.indexof(whoId)=== -1){
-                    result.frineds.push(whoId);
-                    result.markModified('frineds');
+                if(result.friends.indexof(whoId)=== -1){
+                    result.friends.push(whoId);
+                    result.markModified('friends');
                     result.save((err,_r)=>{
                         if(err){
                             throw new Error(err);

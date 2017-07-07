@@ -19,7 +19,7 @@ module.exports = (app)=>{
     //获取离线信息
     app.get('/offLineMessage/:id',require('./routes/message').offline)
 
-    app.get('/getUserInfo',require('./routes/users').info)
+    app.get('/getUserInfo/:id',require('./routes/users').info)
 
     app.put('/addUser',require('./routes/users').add)
 
@@ -30,6 +30,8 @@ module.exports = (app)=>{
     app.post('/star/:id',require('./routes/master').star)
 
     app.get('/star/:id',require('./routes/master').getStar)
+
+    app.get('/qrcode/:id',require('./routes/master').qrcode)
 
     app.post('/editUserInfo/:id',require('./routes/users').edit)
 

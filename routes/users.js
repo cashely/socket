@@ -2,11 +2,11 @@ const user = require('../models/user.js');
 
 
 //根据openId查询用户信息
-function getUserFromDb(openId){
+function getUserFromDb(id){
     return user
             .findOne()
             .where({
-                wxId:openId
+                _id:id
             })
             .exec((err,result)=>{
                 if(err){
@@ -19,7 +19,7 @@ function getUserFromDb(openId){
 
 function findUserByWxId(wxId){
     return user
-                .find()
+                .findOne()
                 .where({wxId:wxId})
                 .exec((err,result)=>{
                     if(err){
@@ -58,21 +58,17 @@ function editUserInfo(obj){
 module.exports = {
     info:(req,res,next)=>{
         let userInfo;
-        if(req.query.code){
+        if(req.params.id){
             return res.json({
                 statu:0,
-                msg:'code必须存在!'
+                msg:'id必须存在!'
             })
         };
 
-        //通过code获取微信那边的openId
-
-
-
-        getUserFromDb(req.query.id)
+        getUserFromDb(req.params.id)
             .then((result)=>{
                 console.log(result);
-                if(!!result.length){
+                if(!!result){
                     res.json({
                         statu:1,
                         datas:result,
