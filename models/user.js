@@ -45,6 +45,7 @@ let Schema = new mongoose.Schema({
     wxImage:{
         type:String
     },//微信头像
+    wxCode:String,//微信code
     message:{
         type:[],
         default:[]

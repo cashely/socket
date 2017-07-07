@@ -3,36 +3,54 @@ const user = require('../models/user.js');
 const request = require('request');
 function getUserInfo(code,from){
     console.log('通过微信获取用户openId');
-    return getOpenIdFromCode(code)
-            .then((result)=>{
-                console.log('通过opendId获取用户信息');
-                return getUserInfoFromOpenId(result.openid)
-                        .then((oUserInfo)=>{
-                            if(!oUserInfo){
-                                return getUserInfoFormWx(result.access_token,result.openid)
-                                        .then((_userInfo)=>{
-                                            _userInfo.openId = _userInfo.openid;
-                                            _userInfo.wxUsername = _userInfo.nickname;
-                                            _userInfo.wxImgUrl = _userInfo.headimgurl;
-                                            return saveUserInfo({
-                                                   wxId:result.openid,
-                                                   wxName:_userInfo.nickname,
-                                                   wxImage:_userInfo.headimgurl,
-                                                   parent:from
-                                               })
-                                               .then((saveResult)=>{
-                                                    console.log('保存了的用户信息:',saveResult);
-                                                    return updateMasterFriends(saveResult._id,from)
-                                                    .then((result)=>{
-                                                        return saveResult;
-                                                    });
-                                               })
-                                        })
-                            }else{
-                                return oUserInfo;
-                            }
-                        })
+    return getUserInfoByCode(code)
+            .then((codeResult)=>{
+                if(!!codeResult){
+                    return codeResult;
+                }else{
+                    getOpenIdFromCode(code)
+                        .then((result)=>{
+                            console.log('通过opendId获取用户信息');
+                            return getUserInfoFromOpenId(result.openid)
+                                    .then((oUserInfo)=>{
+                                        if(!oUserInfo){
+                                            return getUserInfoFormWx(result.access_token,result.openid)
+                                                    .then((_userInfo)=>{
+                                                        _userInfo.openId = _userInfo.openid;
+                                                        _userInfo.wxUsername = _userInfo.nickname;
+                                                        _userInfo.wxImgUrl = _userInfo.headimgurl;
+                                                        return saveUserInfo({
+                                                               wxId:result.openid,
+                                                               wxName:_userInfo.nickname,
+                                                               wxImage:_userInfo.headimgurl,
+                                                               parent:from
+                                                           })
+                                                           .then((saveResult)=>{
+                                                               return updateCodeById(saveResult._id,code)
+                                                                       .then((result)=>{
+                                                                           return saveResult;
+                                                                       })
 
+
+                                                           })
+                                                           .then((saveResult)=>{
+                                                               return updateMasterFriends(saveResult._id,from)
+                                                                       .then((result)=>{
+                                                                           return saveResult;
+                                                                       });
+                                                           })
+                                                    })
+                                        }else{
+                                            return updateCodeById(oUserInfo._id,code)
+                                                    .then((result)=>{
+                                                        return oUserInfo;
+                                                    })
+
+                                        }
+                                    })
+
+                        })
+                }
             })
 }
 
@@ -96,6 +114,32 @@ function updateMasterFriends(id,whoId){
                 }
             }
         }
+    })
+}
+
+function getUserInfoByCode(code){
+    return user
+            .findOne()
+            .where({wxCode:code})
+            .exec((err,result)=>{
+                if(err){
+                    throw new Error()
+                }else{
+                    return result;
+                }
+            })
+}
+
+//根据用户id更新code
+function updateCodeById(id,code){
+    return new Promise((resolve,reject)=>{
+        user.update({_id:id},{$set:{wxCode:code}},(err,result)=>{
+            if(err){
+                throw new Error(err);
+            }else{
+                return result;
+            }
+        })
     })
 }
 
