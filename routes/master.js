@@ -1,3 +1,6 @@
+const user = require('../models/user.js');
+const {url} = require('../config.js');
+const qrcode = require('qrcode');
 function findUserByPhone(phone){
     return user
             .find()
@@ -120,5 +123,10 @@ module.exports = {
                     msg:'获取master评价失败!'
                 })
             })
+    },
+    qrcode:(req,res,next)=>{
+        qrcode.toDataURL(`${url}?from=${req.params.id}`,(err,image)=>{
+            res.render('qrcode',{url:image})
+        })
     }
 }

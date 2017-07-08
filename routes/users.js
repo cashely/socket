@@ -2,11 +2,11 @@ const user = require('../models/user.js');
 
 
 //根据openId查询用户信息
-function getUserFromDb(openId){
+function getUserFromDb(id){
     return user
             .findOne()
             .where({
-                wxId:openId
+                _id:id
             })
             .exec((err,result)=>{
                 if(err){
@@ -19,7 +19,7 @@ function getUserFromDb(openId){
 
 function findUserByWxId(wxId){
     return user
-                .find()
+                .findOne()
                 .where({wxId:wxId})
                 .exec((err,result)=>{
                     if(err){
@@ -42,6 +42,19 @@ function addUser(obj){
     })
 }
 
+//根据用户id添加诊疗卡
+function addCrad(id,cradId,hosName){
+    return new Promise((resolve,reject)=>{
+        user.update({_id:id},{$push:{crads:{id:cradId,hospitalName:hosName}}},(err,result)=>{
+            if(err){
+                reject(err);
+            }else{
+                resolve(result);
+            }
+        })
+    })
+}
+
 //用户完善资料
 function editUserInfo(obj){
     return new Promise((resolve,reject)=>{
@@ -58,21 +71,17 @@ function editUserInfo(obj){
 module.exports = {
     info:(req,res,next)=>{
         let userInfo;
-        if(req.query.code){
+        if(req.params.id){
             return res.json({
                 statu:0,
-                msg:'code必须存在!'
+                msg:'id必须存在!'
             })
         };
 
-        //通过code获取微信那边的openId
-
-
-
-        getUserFromDb(req.query.id)
+        getUserFromDb(req.params.id)
             .then((result)=>{
                 console.log(result);
-                if(!!result.length){
+                if(!!result){
                     res.json({
                         statu:1,
                         datas:result,
@@ -140,4 +149,25 @@ module.exports = {
             })
         })
     },
+    addCrad:(req,res,next)=>{
+        if(!req.query.cradId || !req.query.hospitalName){
+            return res.json({
+                statu:0,
+                msg:'诊疗卡号或者医院必须能存在!'
+            })
+        }
+        addCrad(req.params.id,req.query.cradId,req.query.hospitalName)
+        .then((result)=>{
+            return res.json({
+                statu:1,
+                msg:'添加诊疗卡号成功!'
+            })
+        })
+        .catch((err)=>{
+            return res.json({
+                statu:0,
+                msg:err
+            })
+        })
+    }
 }

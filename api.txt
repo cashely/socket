@@ -97,3 +97,10 @@
         sex:required,
         hospitalId:required
     }
+14、添加诊疗卡
+    /addCrad/:id
+    method:POST,
+    params:{
+        cradId:required,
+        hospitalName:required
+    }

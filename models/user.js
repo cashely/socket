@@ -22,7 +22,10 @@ let Schema = new mongoose.Schema({
         type:String
     },//联系电话
     crads:{
-        type:[],
+        type:[{
+            id:String,
+            hospitalName:String
+        }],
         default:[]
     },//诊疗卡
     regDate:{
