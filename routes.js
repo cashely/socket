@@ -23,6 +23,9 @@ module.exports = (app)=>{
 
     app.put('/addUser',require('./routes/users').add)
 
+    //添加诊疗卡号
+    app.post('/addCrad/:id',require('./routes/users').addCrad)
+
     app.put('/addMaster',require('./routes/master').add)
 
     app.get('/history',require('./routes/message').history)

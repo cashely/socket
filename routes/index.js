@@ -128,9 +128,9 @@ function updateCodeById(id,code){
     return new Promise((resolve,reject)=>{
         user.update({_id:id},{$set:{wxCode:code}},(err,result)=>{
             if(err){
-                throw new Error(err);
+                reject(err);
             }else{
-                return result;
+                resolve(result);
             }
         })
     })
@@ -184,6 +184,7 @@ module.exports = (req,res,next)=>{
 
         getUserInfo(req.query.code,req.query.from)
             .then((userInfo)=>{
+                
                 res.render('index',{title:userInfo.wxName,id:userInfo._id,parent:userInfo.parent});
             })
     }
