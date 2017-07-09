@@ -1,4 +1,5 @@
 const user = require('../models/user.js');
+const chat = require('../models/chat.js');
 
 
 //根据openId查询用户信息

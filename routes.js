@@ -30,6 +30,9 @@ module.exports = (app)=>{
 
     app.put('/addMaster',require('./routes/master').add);
 
+    //根据masterId查询用户信息以及最新消息
+    app.get('/userList/:id',require('./routes/master').userList);
+
     app.get('/history',require('./routes/message').history);
 
     app.post('/star/:id',require('./routes/master').star);
