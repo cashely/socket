@@ -27,7 +27,7 @@ function getUserInfo(code,from){
                                                                parent:from
                                                            })
                                                            .then((saveResult)=>{
-                                                               return updateMasterFriends(saveResult._id,from)
+                                                               return updateMasterFriends(from,saveResult._id)
                                                                        .then((result)=>{
                                                                            return saveResult;
                                                                        });
