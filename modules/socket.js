@@ -282,7 +282,7 @@ io.on('connection',socketioJwt.authorize({
                     }
                     return _nGroups;
                 })();
-                io.sockets.emit('userList',groups);
+                //io.sockets.emit('userList',groups);
             })
     })
 

@@ -1,5 +1,7 @@
 const user = require('../models/user.js');
+const chat = require('../models/chat.js');
 const {url} = require('../config.js');
+const moment = require('moment');
 const qrcode = require('qrcode');
 function findUserByPhone(phone){
     return user
@@ -102,41 +104,62 @@ function editMasterInfo(obj,id){
 function getUserList(ids,masterId){
     let list = [],promiseArr = [];
     function getSingle(id){
-        return user.findOne().where({_id:id}).exec((err,userInfo)=>{
+        return new Promise((resolve,reject)=>{
+          user.findOne().where({_id:id}).exec((err,userInfo)=>{
             if(err){
-                throw new Error(err);
+              throw new Error(err);
             }else{
-                userInfo = userInfo.toObject();
-                return chat.findOne().where({$or:[{form:id,to:masterId},{from:masterId,to:id}]}).sort({date:1}).exec((err,message)=>{
-                    if(err){
-                        throw new Error(err);
-                    }else{
-                        userInfo.lastMessage = message;
-                        return userInfo;
-                    }
-                })
+              let _userInfo = !!userInfo ? userInfo.toObject() :{};
+              chat.findOne().where({$or:[{from:id,to:masterId},{to:id,from:masterId}]}).sort({date:-1}).exec((err,message)=>{
+                if(err){
+                  reject(err)
+                }else{
+                  if(!!message){
+                    message = message.toObject();
+                    message.date = moment(message.date).format('a|HH:mm').split('|');
+                  }
+                  _userInfo.lastMessage = message;
+                  resolve(_userInfo);
+                }
+              })
             }
+          })
         })
     }
     ids.forEach((item)=>{
         promiseArr.push(getSingle(item))
     });
-    return promiseAll(promiseArr);
+    return Promise.all(promiseArr);
 }
 
 module.exports = {
     index:(req,res,next)=>{
         getFriends(req.query.id)
           .then((result)=>{
-              res.locals.getFriends = result
+              res.locals.getFriends = result;
+              //return chat
+              //        .find()
+              //        .where({$or:[{from:req.query.id,to:result._id},{from:result._id,to:req.query.id}]})
+              //        .order({date:1})
+              //        .limit(1)
+              //        .exec((err,result)=>{
+              //          if(err){
+              //            throw new Error(err);
+              //          }else{
+              //            return result;
+              //          }
+              //        })
           })
-          .then((result)=>{
+          .then((_result)=>{
+              res.locals.lastMessage = _result;
               getUserInfo(req.query.id).then((result)=>{
-                  console.log(res.locals.getFriends)
-                  qrcode.toDataURL(`${url}?from=${req.query.id}`,(err,image)=>{
-                      res.render('master',{title:'管理员',datas:result,getFriends:res.locals.getFriends,qrcode:image});
-                  });
+                  return result.toObject()
               })
+            .then((result)=>{
+              qrcode.toDataURL(`${url}?from=${req.query.id}`,(err,image)=>{
+                res.render('master',{title:'管理员',datas:result,getFriends:res.locals.getFriends,qrcode:image});
+              });
+            })
           })
     },
     add:(req,res,next)=>{

@@ -4,7 +4,7 @@
            <img src=" <% if(!datas.wxImage){ %>/images/user.png <%}else{%><%=datas.wxImage %><% }%>" class="user-img">
            <div class="card-right">
                 <div class="user-name"> <%=datas.wxName%></div>
-                <div class="user-wx">微信号：123456</div>
+                <!--<div class="user-wx">微信号：123456</div>-->
            </div>
        </div>
         <a href="/userInfo?id=<%= datas._id%>" class="card icon-right">
@@ -12,9 +12,9 @@
         </a>
         <ul class="card-list">
             <li class="card-item">诊疗卡管理 <a class="card-item-add">添加</a></li>
-            <% datas.crads.forEach(function(item){%>
+            <% datas.crads.forEach(function(item,i){%>
                 <li class="card-item card-row">
-                    <span class="card-item-left">诊疗卡1</span>
+                    <span class="card-item-left">诊疗卡 <%=i+1%></span>
                     <div class="card-item-content">
                         <div class="card-row-item"><input type="text" class="card-row-item-input hospitalName" placeholder="请输入医院名称" value="<%=item.hospitalName%>"></div>
                         <div class="card-row-item medicalCardId"><input type="text" class="card-row-item-input cradId" placeholder="请输入卡号" value="<%=item.id%>"></div>
