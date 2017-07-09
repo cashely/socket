@@ -109,7 +109,7 @@ function getUserList(ids,masterId){
                 userInfo = userInfo.toObject();
                 return chat.findOne().where({$or:[{form:id,to:masterId},{from:masterId,to:id}]}).sort({date:1}).exec((err,message)=>{
                     if(err){
-                        throw new Error(err)
+                        throw new Error(err);
                     }else{
                         userInfo.lastMessage = message;
                         return userInfo;

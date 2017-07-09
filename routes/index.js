@@ -14,7 +14,7 @@ function getUserInfo(code,from){
                             return getUserInfoFromOpenId(result.openid)
                                     .then((oUserInfo)=>{
                                         if(!oUserInfo){
-                                            return getUserInfoFormWx(result.access_token,result.openid)
+                                            return getUserInfoFromWx(result.access_token,result.openid)
                                                     .then((_userInfo)=>{
                                                         _userInfo.openId = _userInfo.openid;
                                                         _userInfo.wxUsername = _userInfo.nickname;
@@ -62,7 +62,7 @@ function getOpenIdFromCode(code){
     })
 }
 
-function getUserInfoFormWx(accessToken,openId){
+function getUserInfoFromWx(accessToken,openId){
     return new Promise((resolve,reject)=>{
         request(`https://api.weixin.qq.com/sns/userinfo?access_token=${accessToken}&openid=${openId}&lang=zh_CN`,(err,response,body)=>{
             if(!err){
@@ -142,11 +142,11 @@ function updateCodeById(id,code,from){
                             throw new Error(err);
                         }else{
                             return new Promise((resolve,reject)=>{
-                                user.update({_id:id},{$set:updateUserCode},(err,result)=>{
+                                user.update({_id:id},{$set:updateUserCode},(err,_result)=>{
                                     if(err){
                                       reject(err);
                                     }else {
-                                      console.log(result,"resultupdateCodeById")
+                                      console.log(_result,"resultupdateCodeById")
                                       resolve(result);
                                     }
                                 })

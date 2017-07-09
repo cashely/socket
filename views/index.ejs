@@ -78,76 +78,76 @@
             //监听验证权限事件
              getToken().then((result)=>{
                         if(result.statu === 0){
-                return alert(result.msg);
-            }
-            socket = io.connect('http://192.168.1.28:3006',{path:'/socket'});
-            // console.log(socket);
+                            return alert(result.msg);
+                        }
+                        socket = io.connect('http://192.168.1.28:3006',{path:'/socket'});
+                        // console.log(socket);
 
-            socket.on('error',function(error){
-                console.log(error);
-            });
-            socket.on("unauthorized", function(error, callback) {
-                console.log(error);
-                if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
-                    callback();
-                    console.log("token过期!");
-                    socket = null;
-                    connect();
-                }
-            });
+                        socket.on('error',function(error){
+                            console.log(error);
+                        });
+                        socket.on("unauthorized", function(error, callback) {
+                            console.log(error);
+                            if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
+                                callback();
+                                console.log("token过期!");
+                                socket = null;
+                                connect();
+                            }
+                        });
 
-            socket.on('connect',function(){
-                console.log(socket);
+                        socket.on('connect',function(){
+                            console.log(socket);
 
-               getHistoryMessage()
+                           getHistoryMessage()
 
 
 
-            })
-            socket.on('authenticated',function(){
-                //监听连接事件
+                        })
+                        socket.on('authenticated',function(){
+                            //监听连接事件
 
-                socket.on('connectId',function(rid){
-                    // alert('您的昵称为:'+message.info);
-                    id = rid;
-                });
-                //监听消息
-                socket.on('messages',function(message){
-                    console.log('您收到来自'+message.from+'的消息:'+message.info);
-                    if(message.info == 'close'){}
-                    var dialog="";
-                    dialog +='<div class="dialog-box dialog-left"><a href="/pharmacist?id=<%= parent%>"  class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a><div class="dialog-content"><span class="dialog-text">';
-                    dialog += message.info;
-                    dialog += '</span> </div> </div>';
-                    $('.dialog').append(dialog);
-                    $('.dialog').scrollTop($('.dialog')[0].scrollHeight);
+                            socket.on('connectId',function(rid){
+                                // alert('您的昵称为:'+message.info);
+                                id = rid;
+                            });
+                            //监听消息
+                            socket.on('messages',function(message){
+                                console.log('您收到来自'+message.from+'的消息:'+message.info);
+                                if(message.info == 'close'){}
+                                var dialog="";
+                                dialog +='<div class="dialog-box dialog-left"><a href="/pharmacist?id=<%= parent%>"  class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a><div class="dialog-content"><span class="dialog-text">';
+                                dialog += message.info;
+                                dialog += '</span> </div> </div>';
+                                $('.dialog').append(dialog);
+                                $('.dialog').scrollTop($('.dialog')[0].scrollHeight);
+                            })
+
+                            //监听重新连接事件
+                            socket.on('reconnect',function(){
+                                console.log('断线重连!');
+                            })
+
+                            //监听其他用户登录事件
+
+                            socket.on('otherConnect',function(message){
+                                console.log(message);
+                            })
+
+                            //监听用户列表事件
+
+                            socket.on('userList',function(list){
+                                console.log(list);
+                            });
+
+
+                            //监听离线消息事件
+                            socket.on('offLineMessage',function(list){
+                                alert(list.length);
+                            })
+                        })
+                        socket.emit('authenticate',{token:result.datas})
                 })
-
-                //监听重新连接事件
-                socket.on('reconnect',function(){
-                    console.log('断线重连!');
-                })
-
-                //监听其他用户登录事件
-
-                socket.on('otherConnect',function(message){
-                    console.log(message);
-                })
-
-                //监听用户列表事件
-
-                socket.on('userList',function(list){
-                    console.log(list);
-                });
-
-
-                //监听离线消息事件
-                socket.on('offLineMessage',function(list){
-                    alert(list.length);
-                })
-            })
-            socket.emit('authenticate',{token:result.datas})
-            })
 
 
 
