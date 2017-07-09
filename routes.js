@@ -36,6 +36,8 @@ module.exports = (app)=>{
 
     app.get('/qrcode/:id',require('./routes/master').qrcode);
 
+    app.post('/editMasterInfo/:id',require('./routes/master').edit);
+
     app.post('/editUserInfo/:id',require('./routes/users').edit);
 
     //患者信息
