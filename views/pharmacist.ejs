@@ -1,0 +1,45 @@
+<% include ./common/header %>
+    <div class="container">
+       <div class="card">
+           <img src=" <% if(!datas.wxImage){ %>/images/hospital.png<%}else{%><%=datas.wxImage %><% }%>" class="user-img">
+           <div class="card-right">
+                <div class="user-name"><%=datas.wxName%></div>
+                <!--<div class="user-wx">副主任药师－华侨医院</div>-->
+           </div>
+           <img src="/images/pharmacist-wx.jpg" class="pharmacist-wx">
+       </div>
+        <ul class="card-list">
+            <li class="card-item  card-row">
+                <span class="card-item-left">服务人次</span>
+                <div class="card-item-content">
+                    <div class="card-row-item">1380人</div>
+                </div>
+            </li>
+            <li class="card-item  card-row">
+                <span class="card-item-left">服务评分</span>
+                <div class="card-item-content">
+                    <div class="card-row-item icon-star service-star"><%=datas.star%></div>
+                </div>
+            </li>
+        </ul>
+    </div>
+<script>
+    /*function getMasteInfo(to){
+        fetch('/getUserInfo/'+to, {
+            method:'GET'
+        }).then((result)=>{
+            return result.json();
+        }).then((result)=>{
+            console.log(result)
+            if(result.statu == 1){
+                if(result.datas.wxImage != undefined && result.datas.wxImage != ""){
+                    $(".user-img").text(result.datas.wxImage);
+                }
+                $(".user-name").text(result.datas.wxName)
+                $(".service-star").text(result.datas.star)
+            }
+        })
+    }
+    getMasteInfo(url2obj().id)*/
+</script>
+<% include ./common/footer %>

@@ -56,22 +56,29 @@ function addCrad(id,cradId,hosName){
 }
 
 //用户完善资料
-function editUserInfo(obj){
+function editUserInfo(obj,id){
     return new Promise((resolve,reject)=>{
-        new user(obj).save((err,result)=>{
+        user.update({_id:id},{$set:obj},(err,result)=>{
+                    if(err){
+                        reject(err);
+                    }else{
+                        resolve(result);
+                    }
+             })
+         /*new user(obj).save((err,result)=>{
             if(err){
                 reject(err);
             }else{
                 resolve(result);
             }
-        })
+        })*/
     })
 }
 
 module.exports = {
     info:(req,res,next)=>{
         let userInfo;
-        if(req.params.id){
+        if(!req.params.id){
             return res.json({
                 statu:0,
                 msg:'id必须存在!'
@@ -134,7 +141,7 @@ module.exports = {
             name:req.body.name,
             sex:req.body.sex,
             hospitalId:req.body.hospitalId
-        })
+        },req.body.id)
         .then((result)=>{
             res.json({
                 statu:1,
@@ -150,13 +157,13 @@ module.exports = {
         })
     },
     addCrad:(req,res,next)=>{
-        if(!req.query.cradId || !req.query.hospitalName){
+        if(!req.body.cradId || !req.body.hospitalName){
             return res.json({
                 statu:0,
                 msg:'诊疗卡号或者医院必须能存在!'
             })
         }
-        addCrad(req.params.id,req.query.cradId,req.query.hospitalName)
+        addCrad(req.params.id,req.body.cradId,req.body.hospitalName)
         .then((result)=>{
             return res.json({
                 statu:1,

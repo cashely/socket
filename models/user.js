@@ -21,6 +21,9 @@ let Schema = new mongoose.Schema({
     phone:{
         type:String
     },//联系电话
+    name:{
+        type:String
+    },//真实姓名
     crads:{
         type:[{
             id:String,

@@ -57,10 +57,48 @@ function getStartById(id){
                 }
             })
 }
+//获取用户信息
+function getUserInfo(id){
+    return user
+      .findOne()
+      .where({_id:id})
+      .exec((err,result)=>{
+          if(err){
+              throw new Error('查询用户出错!');
+          }else{
+              return result;
+          }
+      })
+}
+
+//获取用户列表
+function getFriends(id){
+    return user
+      .find()
+      .where({parent:id})
+      .exec((err,result)=>{
+          if(err){
+              throw new Error('查询用户出错!');
+          }else{
+              return result;
+          }
+      })
+}
 
 module.exports = {
     index:(req,res,next)=>{
-        res.render('master',{title:'管理员'});
+        getFriends(req.query.id)
+          .then((result)=>{
+              res.locals.getFriends = result
+          })
+          .then((result)=>{
+              getUserInfo(req.query.id).then((result)=>{
+                  console.log(res.locals.getFriends)
+                  qrcode.toDataURL(`${url}?from=${req.query.id}`,(err,image)=>{
+                      res.render('master',{title:'管理员',datas:result,getFriends:res.locals.getFriends,qrcode:image});
+                  });
+              })
+          })
     },
     add:(req,res,next)=>{
         if(!req.query.phone){
@@ -92,8 +130,8 @@ module.exports = {
         })
     },
     star:(req,res,next)=>{
-        console.log(req.query.star);
-        starForMaster(req.params.id,req.query.star)
+        console.log(req.params.id);
+        starForMaster(req.params.id,req.body.num)
             .then((result)=>{
                 res.json({
                     statu:1,

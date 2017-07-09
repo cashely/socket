@@ -1,43 +1,189 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script src="/javascripts/socket.io.js"></script>
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-    <input type="text" id="phone" style="width:200px"/>
-    <input type="text" id="password" style="width:200px"/>
-    <button onClick="connect()">链接实时聊天室</button>
-
-    <input type="text" placeholder="请输入对方_id" id="memberId"/>
-    <input type="text" placeholder="请输入发送内容" id="message" />
-    <button onClick="sendMasterMessage()">发送信息</button>
-
-    <input type="text" placeholder="对方_id" id="otherId" />
-    <button onClick="getHistoryMessage()">获取聊天记录</button>
+<% include ./common/header %>
+<div class="container chat">
+    <div class="chat-top">
+        <div class="chat-top-left">
+            <a onClick="showMasterInfo()" href="javascript:void(0)" class="hospital-logo">
+                <img src="<% if(!datas.wxImages){%>/images/hospital.png<%}else{%><%=datas.wxImage %><%}%>" class="chat-titleImg">
+                <%=datas.wxName%>
+            </a>
+        </div>
+        华侨医院－药师患者沟通平台 <a href="/login" class="exit">退出</a>
+    </div>
+    <div class="chat-content">
+        <div class="chat-content-left">
+            <div class="chat-list">
+                <% getFriends.forEach(function(item,i){%>
+                    <div class="list-item <% if(i==0){%>active<%}%>" id="<%= item._id%>">
+                        <img src="<%= item.wxImage%>" onClick="showUserInfo()" class="list-img">
+                        <div class="list-item-content">
+                            <div class="user"><span class="user-name"><%= item.wxName%></span> <span class="chat-time">上午11:32</span></div>
+                            <div class="newInfo">您好，我想咨询一下用药的问题…</div>
+                        </div>
+                    </div>
+                <%})%>
+                <!--<div class="list-item active">
+                    <img src="/images/user.png" onClick="showUserInfo()" class="list-img">
+                    <div class="list-item-content">
+                        <div class="user"><span class="user-name">刘患者</span> <span class="chat-time">上午11:32</span></div>
+                        <div class="newInfo">您好，我想咨询一下用药的问题…</div>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+        <div class="chat-content-right">
+            <div class="chat-content-right-top">
+                <div class="chatContent">
+                    <!-- <div class="chatContent-box chatContent-left">
+                         <a href="javascript:void(0)" class="chatContent-logo user-logo">
+                             <img src="/images/user.png" class="chatContent-img">
+                         </a>
+                         <div class="chatContent-content">
+                             <span class="chatContent-text">您好，从专业角度出发，为避免信息缺失造成风险管理遗漏，请您在个人中心完善资料，方便药师了解您的基础健康信息。</span>
+                         </div>
+                     </div>
+                     <div class="chatContent-box chatContent-right">
+                         <a href="javascript:void(0)" class="chatContent-logo hospital-logo">
+                             <img src="/images/hospital.png" class="chatContent-img">
+                         </a>
+                         <div class="chatContent-content">
+                             <span class="chatContent-text">您好，从专业角度出发，为避免信息缺失造成风险管理遗漏，请您在个人中心完善资料，方便药师了解您的基础健康信息。</span>
+                             <a class="chatContent-link">
+                                 <img src="/images/icon-arrow.png" class="icon-arrow">关注微信公众号
+                             </a>
+                            <a class="chatContent-link">
+                                <img src="/images/icon-arrow.png" class="icon-arrow">完善个人资料
+                            </a>
+                        </div>
+                    </div>-->
+                </div>
+                <div class="popup hospital-popup">
+                    <div class="popup-top">
+                        <img src="/images/icon-close.png" class="popup-close">
+                        <span class="popup-edit">编辑</span>
+                    </div>
+                    <div class="popup-content master-popup">
+                        <div class="popup-item QRcode">
+                            <div class="popup-item-left QRcode-text">二维码</div>
+                            <div class="popup-item-right">
+                                <img src="<%= qrcode%>" class="QRcode-img">
+                            </div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">登录账号</div>
+                            <div class="popup-item-right"><%=datas.phone%></div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">服务人次</div>
+                            <div class="popup-item-right">1380人</div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">服务评分</div>
+                            <div class="popup-item-right"><%=datas.star%> <img src="/images/icon-star-active.png" class="icon-star"></div>
+                        </div>
+                        <div class="popup-item gender">
+                            <div class="popup-item-left">性别</div>
+                            <div class="popup-item-right"><% if(datas.sex == 0){%>男<%}else {%>女<%}%></div>
+                            <div  class="popup-item-right gender-selects">
+                                <div class="select">男</div>
+                                <div class="select active">女</div>
+                            </div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">单位</div>
+                            <div class="popup-item-right"><input class="popup-input" type="text" value="广州华侨医院" placeholder="请输入您的单位" disabled></div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">职称</div>
+                            <div class="popup-item-right">
+                                <div class="popup-item-right"><input class="popup-input" type="text" value="副主任" placeholder="请输入您的职称" disabled></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="popup user-popup">
+                    <div class="popup-top">
+                        <img src="/images/icon-close.png" class="popup-close">
+                    </div>
+                    <div class="popup-content">
+                        <div class="popup-item">
+                            <div class="popup-item-left"><img src="/images/user.png" class="user-img"></div>
+                            <div class="popup-item-right user-name">刘患者</div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">手机号码</div>
+                            <div class="popup-item-right phone">13800000009</div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">真实姓名</div>
+                            <div class="popup-item-right name">刘小六</div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">性别</div>
+                            <div class="popup-item-right sex">女</div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">住院号</div>
+                            <div class="popup-item-right">100＊＊8</div>
+                        </div>
+                        <div class="popup-item">
+                            <div class="popup-item-left">诊疗卡号</div>
+                            <div class="popup-item-right">1234＊＊78</div>
+                        </div>
+                        <div class="popup-item note">
+                            <div class="popup-item-left">备注</div>
+                            <div class="popup-item-right">
+                                <input type="text" class="note-input" placeholder="请输入备注" value="100＊＊8" disabled>
+                                <img src="/images/icon-edit.png" class="icon-edit">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sendInfo">
+                <div class="sendInfo-toolbar">
+                    <div class="sendEvaluation">发送评价请求</div>
+                </div>
+                <textarea name="" id="message" class="sendInfo-content"></textarea>
+                <div class="btn-sendInfo" onClick="sendMasterMessage()">发送</div>
+            </div>
+        </div>
+    </div>
+</div>
     <script>
+        function getUserInfo(id){
+            fetch('/getUserInfo/'+id,{
+                method:'GET'
+            }).then((result)=>{
+                return result.json();
+            }).then((result)=>{
+                console.log(result)
+                if(result.statu == 1){
+                    $(".user-logo .chatContent-img").attr("src",result.datas.wxImage);
+                    $(".chat-list .list-img").attr("src",result.datas.wxImage);
+                    $(".user-popup .user-img").attr("src",result.datas.wxImage);
+                    $(".user-popup .user-name").text(result.datas.wxName);
+                    $(".user-popup .name").text(result.datas.name);
+                    $(".user-popup .phone").text(result.datas.phone);
+                }
+            })
+        }
         function getToken(){
-            return fetch('/token/master/'+document.getElementById('phone').value+'/'+document.getElementById('password').value,{method:'GET'}).then((result)=>{
+            return fetch('/token/master/18011729138/123',{method:'GET'}).then((result)=>{
                 return result.json();
             })
         }
-
-        var socket,id;
+        var socket,id="<%=datas._id%>", userId="";
         function connect(){
             if(!!socket){
                 return alert('您已经加入了聊天!');
             }
             //监听验证权限事件
             getToken().then((result)=>{
-
                 if(result.statu === 0){
                     return alert(result.msg);
                 }
-                socket = io.connect('http://192.168.1.194:3006',{path:'/socket'});
-                // console.log(socket);
+                socket = io.connect('http://192.168.1.28:3006',{path:'/socket'});
+                 //console.log(socket);
 
                 socket.on('error',function(error){
                     console.log(error);
@@ -45,14 +191,16 @@
                 socket.on("unauthorized", function(error, callback) {
                     console.log(error);
                   if (error.data.type == "UnauthorizedError" || error.data.code == "invalid_token") {
-                    callback();
-                    console.log("token过期!");
+                      callback();
+                      console.log("token过期!");
+                      socket = null;
+                      connect();
                   }
                 });
 
                 socket.on('connect',function(){
                     console.log(socket);
-
+                    getHistoryMessage();
 
 
 
@@ -67,7 +215,15 @@
                     });
                     //监听消息
                     socket.on('messages',function(message){
-                        alert('您收到来自'+message.from+'的消息:'+message.info);
+                        console.log('您收到来自'+message.from+'的消息:'+message.info);
+                        var dialog="";
+                        dialog+='<div class="chatContent-box chatContent-left"><a onClick="showUserInfo()" href="javascript:void(0)" class="chatContent-logo user-logo">';
+                        dialog+='<img src="/images/user.png" class="chatContent-img">';
+                        dialog+= '</a> <div class="chatContent-content"> <span class="chatContent-text">';
+                        dialog+=   message.info;
+                        dialog+= '</span> </div> </div>';
+                        $('.chatContent').append(dialog);
+                        $('.chatContent').scrollTop($('.chatContent')[0].scrollHeight);
                     })
 
                     //监听重新连接事件
@@ -84,7 +240,7 @@
                     //监听用户列表事件
 
                     socket.on('userList',function(list){
-                        console.log(list);
+                        console.log(list,);
                     });
 
 
@@ -102,13 +258,22 @@
         }
 
         function sendMasterMessage(){
+            if($(".sendInfo-content").val() == "") return;
             if(!socket){
                 return alert('还没有建立连接呢亲爱的!');
             }
-
-
-            socket.emit('message',{to:document.getElementById('memberId').value,info:document.getElementById('message').value},function(result){
+            socket.emit('message',{to:$(".chat-list .active").attr("id"),info:document.getElementById('message').value},function(result){
+                console.log(result)
                 if(result){
+                    var dialog="";
+                    dialog+='<div class="chatContent-box chatContent-right"><a onClick="showMasterInfo()" href="javascript:void(0)" class="chatContent-logo hospital-logo">';
+                    dialog+='<img src="<% if(!datas.wxImages){%>/images/hospital.png<%}else{%><%=datas.wxImage %><%}%>" class="chatContent-img">';
+                    dialog+= '</a> <div class="chatContent-content"> <span class="chatContent-text">';
+                    dialog+=   document.getElementById('message').value;
+                    dialog+= '</span> </div> </div>'
+                    $('.chatContent').append(dialog);
+                    $('.chatContent').scrollTop($('.chatContent')[0].scrollHeight);
+                    $(".sendInfo-content").val("")
                     alert(result);
                 }
             })
@@ -117,24 +282,105 @@
 
         //获取与当前人员的聊天记录
         function getHistoryMessage(to){
-            var to = to || document.getElementById('otherId').value;
+            var to = to || $(".chat-list .active").attr("id");
             if(!id){
                 return alert('您暂时还没连接!');
             }
-            fetch(`/history?from=${id}&to=${to}`,{method:'GET'})
+            fetch(`/history?from=<%=datas._id%>&to=${to}`,{method:'GET'})
                 .then((result)=>{
                     return result.json()
                 })
                 .then((result)=>{
+                        console.log(result)
                     if(result.statu === 0){
                         return alert(result.msg);
                     }else{
-                        return alert(result.msg);
+                        return result;
                     }
                 })
+                .then((result)=>{
+                     console.log(result,"ss")
+                    if(result.datas.length == 0) return ;
+                    var dialog="";
+                    $(result.datas).each(function(index,ele){
+                        if('<%=datas._id%>' == ele.from){
+                            userId=ele.to
+                            dialog+='<div class="chatContent-box chatContent-right"><a onClick="showMasterInfo()" href="javascript:void(0)" class="chatContent-logo hospital-logo">';
+                            dialog+='<img src="<% if(!datas.wxImages){%>/images/hospital.png<%}else{%><%=datas.wxImage %><%}%>" class="chatContent-img">';
+                            dialog+= '</a> <div class="chatContent-content"> <span class="chatContent-text">';
+                            dialog+=   ele .message;
+                            dialog+= '</span> </div> </div>';
+                        }else{
+                            dialog+='<div class="chatContent-box chatContent-left"><a onClick="showUserInfo()" href="javascript:void(0)" class="chatContent-logo user-logo">';
+                            dialog+='<img src="/images/user.png" class="chatContent-img">';
+                            dialog+= '</a> <div class="chatContent-content"> <span class="chatContent-text">';
+                            dialog+=   ele .message;
+                            dialog+= '</span> </div> </div>';
+                        }
+                    })
+                    $('.chatContent').append(dialog);
+                    $('.chatContent').scrollTop($('.chatContent')[0].scrollHeight);
+                    return userId
+                }) .then((userId)=>{
+                console.log(userId != undefined,userId)
+                    if(userId != undefined && userId != ""){
+                        getUserInfo(userId);
+                    }
+            })
         }
 
-
+        connect()
     </script>
-  </body>
-</html>
+    <script>
+    $(".chat-list .list-item").click(function() {
+        if ($(this).hasClass("active")) return false;
+        getHistoryMessage($(this).attr("id"));
+        $(this).addClass("active").siblings().removeClass("active");
+    });
+    function showMasterInfo() {
+        $(".hospital-popup").show();
+    }
+    $(".popup-close").click(function () {
+        $(this).parents(".popup").hide();
+    });
+   function showUserInfo() {
+       if(userId != undefined && userId != ""){
+           getUserInfo(userId);
+       }
+        $(".user-popup").show();
+    };
+    $(".icon-edit").click(function () {
+        $('.note-input').attr("disabled",false);
+        $('.note-input').select();
+    });
+    $('.note-input').blur(function(){
+        $('.note-input').attr("disabled",true);
+    })
+    $(".popup-edit").click(function () {
+        $('.gender .popup-item-right').hide();
+        $('.gender .gender-selects').css("display","inline-block");
+        if( $('.hospital-popup .popup-input').attr("disabled") == "disabled"){
+            $('.hospital-popup .popup-input').attr("disabled",false);
+            $('.hospital-popup .popup-input').first().select();
+            $('.hospital-popup .popup-input').addClass("active-input");
+            $(".popup-edit").text("保存");
+        }else{
+            $('.hospital-popup .popup-input').attr("disabled",true);
+            $('.hospital-popup .popup-input').removeClass("active-input");
+            $(".popup-edit").text("编辑");
+        }
+    });
+    $(".gender-selects .select").click(function () {
+        if ($(this).hasClass("active")) return false;
+        $(this).addClass("active").siblings().removeClass("active");
+    });
+    $(".sendEvaluation").click(function(){
+        var hospital="";
+        hospital +='<div class="chatContent-box chatContent-right"><a onClick="showMasterInfo()" href="javascript:void(0)" class="chatContent-logo hospital-logo"> <img src="/images/hospital.png" class="chatContent-img"> </a> <div class="chatContent-content"> <span class="chatContent-text">' ;
+        hospital += '感谢您的咨询！希望我们的服务能解决您的问题。赶紧去给黄药师的服务评分吧！';
+        hospital += ' <a class="chatContent-link"> <img src="/images/icon-arrow.png" class="icon-arrow">去评分</a></span> </div> </div>';
+        $('.chatContent').append(hospital);
+        $('.chatContent').scrollTop($('.chatContent')[0].scrollHeight);
+    })
+</script>
+<% include ./common/footer %>

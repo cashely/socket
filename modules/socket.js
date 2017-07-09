@@ -250,6 +250,7 @@ io.on('connection',socketioJwt.authorize({
             }else{
                 //向对应的id发送消息
                 console.log('需要发送消息的id为:'+sid);
+                fn('发送信息成功!');
                 socket.to(sid).emit('messages',{from:userInfo.name,info:message.info})
 
             }

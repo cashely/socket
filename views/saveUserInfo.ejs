@@ -1,0 +1,49 @@
+<% include ./common/header %>
+    <div class="container">
+        <ul class="card-list">
+            <li class="card-item  card-row">
+                <span class="card-item-left">手机号码</span>
+                <div class="card-item-content">
+                    <div class="card-row-item"><input type="text" class="card-row-item-input" placeholder="请输入您的手机号码" value="13800000009" disabled></div>
+                </div>
+            </li>
+        </ul>
+        <ul class="card-list">
+            <li class="card-item  card-row">
+                <span class="card-item-left">真实姓名</span>
+                <div class="card-item-content">
+                    <div class="card-row-item"><input type="text" class="card-row-item-input" placeholder="请输入您的真实姓名" value="刘小六" disabled></div>
+                </div>
+            </li>
+            <li class="card-item  card-row">
+                <span class="card-item-left">性别</span>
+                <div class="card-item-content">
+                    <div class="card-row-item">
+                        <input type="text" class="card-row-item-input" placeholder="请输入您的性别" value="女" disabled>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="card-list">
+            <li class="card-item  card-row">
+                <span class="card-item-left">住院号</span>
+                <div class="card-item-content">
+                    <div class="card-row-item"><input type="text" class="card-row-item-input" placeholder="请输入您的住院号" value="100＊＊8" disabled></div>
+                </div>
+            </li>
+        </ul>
+        <div class="btn btn-edit" onClick="edit()">编辑</div>
+    </div>
+<script>
+    function edit(){
+        if( $(".btn-edit").hasClass("active")){
+            $('.card-row-item-input').attr("disabled",true);
+            $(".btn-edit").removeClass("active").text("编辑");
+            return false;
+        }
+        $('.card-row-item-input').attr("disabled",false);
+        $('.card-row-item-input').first().select();
+        $(".btn-edit").addClass("active").text("保存")
+    }
+</script>
+<% include ./common/footer %>

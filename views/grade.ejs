@@ -1,0 +1,39 @@
+<% include ./common/header %>
+    <div class="container">
+       <div class="grade">
+           请您给黄药师的服务评分：
+           <div class="starGroup">
+               <i class="icon-star"></i>
+               <i class="icon-star"></i>
+               <i class="icon-star"></i>
+               <i class="icon-star"></i>
+               <i class="icon-star"></i>
+           </div>
+       </div>
+        <div class="btn grade-btn">提交</div>
+    </div>
+<script>
+    $(".starGroup .icon-star").click(function () {
+        $(this).siblings().removeClass("icon-star-active");
+        $(this).prevAll().andSelf().addClass("icon-star-active")
+    })
+    $(".grade-btn").click(function () {
+        fetch('/star/'+url2obj().id, {
+            method:'POST',
+            body: JSON.stringify({
+                num:$(".starGroup .icon-star-active").length
+            }),
+            headers:{
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            }
+        }).then((result)=>{
+            return result.json();
+        }).then((result)=>{
+            if(result.statu == 1){
+            window.location.href= "/gradeSucceed?id="+url2obj().id;
+        }
+        })
+    });
+</script>
+<% include ./common/footer %>
