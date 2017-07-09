@@ -34,7 +34,7 @@ function getUserInfo(code,from){
                                                            })
                                                     })
                                         }else{
-                                            return updateCodeById(oUserInfo._id,code)
+                                            return updateCodeById(oUserInfo._id,code,from)
                                                     .then((result)=>{
                                                         return oUserInfo;
                                                     })
@@ -124,9 +124,15 @@ function getUserInfoByCode(code){
 }
 
 //根据用户id更新code
-function updateCodeById(id,code){
+function updateCodeById(id,code,from){
+    let updateUserCode{
+        wxCode:code
+    }
+    if(!!from){
+        updateUserCode.parent = from;
+    }
     return new Promise((resolve,reject)=>{
-        user.update({_id:id},{$set:{wxCode:code}},(err,result)=>{
+        user.update({_id:id},{$set:updateUserCode},(err,result)=>{
             if(err){
               reject(err);
             }else {

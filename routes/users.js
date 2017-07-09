@@ -65,13 +65,6 @@ function editUserInfo(obj,id){
                         resolve(result);
                     }
              })
-         /*new user(obj).save((err,result)=>{
-            if(err){
-                reject(err);
-            }else{
-                resolve(result);
-            }
-        })*/
     })
 }
 
