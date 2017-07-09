@@ -85,6 +85,19 @@ function getFriends(id){
       })
 }
 
+//用户完善资料
+function editMasterInfo(obj,id){
+    return new Promise((resolve,reject)=>{
+        user.update({_id:id},{$set:obj},(err,result)=>{
+                    if(err){
+                        reject(err);
+                    }else{
+                        resolve(result);
+                    }
+             })
+    })
+}
+
 module.exports = {
     index:(req,res,next)=>{
         getFriends(req.query.id)
@@ -161,6 +174,26 @@ module.exports = {
                     msg:'获取master评价失败!'
                 })
             })
+    },
+    edit:(req,res,next)=>{
+        editMasterInfo({
+            sex:req.body.sex,
+            unit:req.body.unit,
+            jobTitle:req.body.jobTitle
+        },req.body.id)
+        .then((result)=>{
+            res.json({
+                statu:1,
+                msg:'更新药师信息成功!'
+            })
+        })
+        .catch((err)=>{
+            console.log(err);
+            res.json({
+                statu:0,
+                msg:'更新药师信息失败!'
+            })
+        })
     },
     qrcode:(req,res,next)=>{
         qrcode.toDataURL(`${url}?from=${req.params.id}`,(err,image)=>{

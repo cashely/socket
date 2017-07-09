@@ -261,7 +261,9 @@
         function sendMasterMessage(type){
             var _m;
             _m = $(".sendInfo-content").val();
-            if(_m == "") return;
+            if(!type && _m == ''){
+                    return false;
+            }
             if(!socket){
                 return alert('还没有建立连接呢亲爱的!');
             }

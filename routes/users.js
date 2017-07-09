@@ -65,13 +65,6 @@ function editUserInfo(obj,id){
                         resolve(result);
                     }
              })
-         /*new user(obj).save((err,result)=>{
-            if(err){
-                reject(err);
-            }else{
-                resolve(result);
-            }
-        })*/
     })
 }
 
@@ -140,7 +133,8 @@ module.exports = {
             phone:req.body.phone,
             name:req.body.name,
             sex:req.body.sex,
-            hospitalId:req.body.hospitalId
+            hospitalId:req.body.hospitalId,
+            mark:req.body.mark
         },req.body.id)
         .then((result)=>{
             res.json({

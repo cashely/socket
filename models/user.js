@@ -67,7 +67,8 @@ let Schema = new mongoose.Schema({
         default:0
     },
     friends:[],//聊天过的朋友
-    parent:String//来自谁的邀请
+    parent:String//来自谁的邀请,
+    mark:String//备注
 });
 
 
