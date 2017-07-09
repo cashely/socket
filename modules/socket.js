@@ -221,7 +221,10 @@ io.on('connection',socketioJwt.authorize({
     //监听消息事件
     socket.on('message',(message,fn)=>{
         console.log('收到用户发送的信息',message);
-        saveChatsById(userInfo._id,message.to,message.info)
+        let _m;
+        _m = message.info;
+
+        saveChatsById(userInfo._id,message.to,_m)
             .then((result)=>{
                 console.log('发送信息成功!');
             })
@@ -239,7 +242,7 @@ io.on('connection',socketioJwt.authorize({
             })();
             console.log(sid,groups);
             if(!sid){
-                saveOfflineMessage(message.to,userInfo._id,message.info)
+                saveOfflineMessage(message.to,userInfo._id,_m)
                     .then((result)=>{
                         fn('此用户当前不在线!');
                     })
@@ -251,8 +254,7 @@ io.on('connection',socketioJwt.authorize({
                 //向对应的id发送消息
                 console.log('需要发送消息的id为:'+sid);
                 fn('发送信息成功!');
-                socket.to(sid).emit('messages',{from:userInfo.name,info:message.info})
-
+                socket.to(sid).emit('messages',{from:userInfo.name,info:_m})
             }
         }else{
             //向所有用户发送信息

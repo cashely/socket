@@ -6,6 +6,10 @@ const Schema = new mongoose.Schema({
     date:{
         type:Date,
         default:new Date()
+    },
+    msgType:{
+        type:Number,//0-不显示 1-正常
+        default:1
     }
 });
 const chat = mongoose.model('chat',Schema);

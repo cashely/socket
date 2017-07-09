@@ -114,6 +114,7 @@
                 //监听消息
                 socket.on('messages',function(message){
                     console.log('您收到来自'+message.from+'的消息:'+message.info);
+                    if(message.info == 'close'){}
                     var dialog="";
                     dialog +='<div class="dialog-box dialog-left"><a href="/pharmacist?id=<%= parent%>"  class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a><div class="dialog-content"><span class="dialog-text">';
                     dialog += message.info;
