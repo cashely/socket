@@ -298,8 +298,8 @@
 }
 /**********pharmacist 药市信息**********/
 .pharmacist-wx{
-  width: pxToRem(60);
-  height: pxToRem(60);
+  width: pxToRem(120);
+  height: pxToRem(120);
   margin-right: pxToRem(26);
 }
 /**********grade 评分**********/
@@ -501,6 +501,8 @@
       bottom: 0;
       z-index: 2;
       width:260px;
+      overflow: hidden;
+      overflow-y: auto;
       border: 1px solid #DEDEDE;
       .chat-list{
         background: #fff;

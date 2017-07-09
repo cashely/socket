@@ -1,7 +1,7 @@
 <% include ./common/header %>
-    <div class="container">
+    <div class="container gradeBox">
        <div class="grade">
-           请您给黄药师的服务评分：
+           请您给<%=datas.wxName%>的服务评分：
            <div class="starGroup">
                <i class="icon-star"></i>
                <i class="icon-star"></i>
@@ -11,6 +11,15 @@
            </div>
        </div>
         <div class="btn grade-btn">提交</div>
+    </div>
+    <div class="container gradeSucceeed" style="display:none;">
+        <div class="grade">
+            <div class="gradeSucceeed-box">
+                <img src="/images/gradeSucceeed.png" class="gradeSucceeed-img">
+                <div  class="gradeSucceeed-text">提交成功</div>
+            </div>
+        </div>
+        <a href="/pharmacist?id=<%=datas._id%>"class="btn grade-btn">查看评分</a>
     </div>
 <script>
     $(".starGroup .icon-star").click(function () {
@@ -31,8 +40,10 @@
             return result.json();
         }).then((result)=>{
             if(result.statu == 1){
-            window.location.href= "/gradeSucceed?id="+url2obj().id;
-        }
+                $(".gradeBox").hide();
+                $(".gradeSucceeed").show();
+//                window.location.href= "/gradeSucceed?id="+url2obj().id;
+            }
         })
     });
 </script>

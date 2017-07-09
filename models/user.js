@@ -18,6 +18,12 @@ let Schema = new mongoose.Schema({
     hospitalId:{
         type:String
     },//住院号码
+    unit:{
+        type:String
+    },//单位
+    jobTitle:{
+        type:String
+    },//职称
     phone:{
         type:String
     },//联系电话
@@ -67,7 +73,7 @@ let Schema = new mongoose.Schema({
         default:0
     },
     friends:[],//聊天过的朋友
-    parent:String//来自谁的邀请,
+    parent:String,//来自谁的邀请,
     mark:String//备注
 });
 

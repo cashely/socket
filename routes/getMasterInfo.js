@@ -1,4 +1,6 @@
 const user = require('../models/user.js');
+const {url} = require('../config.js');
+const qrcode = require('qrcode');
 function getUserFromDb(id){
     return user
       .findOne()
@@ -16,6 +18,8 @@ function getUserFromDb(id){
 module.exports = (req,res,next)=>{
         getUserFromDb(req.query.id)
           .then((result)=>{
-              res.render('pharmacist',{title:"药师信息",datas:result});
+            qrcode.toDataURL(`${url}?from=${req.query.id}`,(err,image)=>{
+              res.render('pharmacist',{title:"药师信息",datas:result,qrcode:image});
+            });
           })
 }

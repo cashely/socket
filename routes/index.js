@@ -1,6 +1,7 @@
 let {wx,url} = require('../config.js');
 const user = require('../models/user.js');
 const request = require('request');
+const moment = require('moment');
 function getUserInfo(code,from){
     console.log('通过微信获取用户openId');
     return getUserInfoByCode(code)
@@ -10,7 +11,6 @@ function getUserInfo(code,from){
                 }else{
                     return getOpenIdFromCode(code)
                             .then((result)=>{
-                            console.log('通过opendId获取用户信息');
                             return getUserInfoFromOpenId(result.openid)
                                     .then((oUserInfo)=>{
                                         if(!oUserInfo){
@@ -34,6 +34,7 @@ function getUserInfo(code,from){
                                                            })
                                                     })
                                         }else{
+                                          console.log('通过openId更新code',oUserInfo);
                                             return updateCodeById(oUserInfo._id,code,from)
                                                     .then((result)=>{
                                                         return oUserInfo;
@@ -53,7 +54,6 @@ function getOpenIdFromCode(code){
         request(`https://api.weixin.qq.com/sns/oauth2/access_token?appid=${wx.appId}&secret=${wx.AppSecret}&code=${code}&grant_type=authorization_code`,(err,response,body)=>{
             if(!err){
                 body = JSON.parse(body);
-                console.log('通过code获取的opendId:',body);
                 resolve(body)
             }else{
                 reject(err)
@@ -89,7 +89,7 @@ function saveUserInfo(obj){
 }
 
 function updateMasterFriends(id,whoId){
-    user.findOne().where({_id:id}).exec((err,result)=>{
+   return user.findOne().where({_id:id}).exec((err,result)=>{
         if(err){
             throw new Error(err);
         }else{
@@ -125,12 +125,13 @@ function getUserInfoByCode(code){
 
 //根据用户id更新code
 function updateCodeById(id,code,from){
-    let updateUserCode{
+    let updateUserCode={
         wxCode:code
     }
     if(!!from){
+      console.log('有from字段');
         updateUserCode.parent = from;
-        user.findOne().where({_id:from}).exec((err,result)=>{
+     return user.findOne().where({_id:from}).exec((err,result)=>{
             if(err){
                 throw new Error(err)
             }else{
@@ -140,23 +141,24 @@ function updateCodeById(id,code,from){
                     result.save((err,_r)=>{
                         if(err){
                             throw new Error(err);
-                        }else{
-                            return new Promise((resolve,reject)=>{
-                                user.update({_id:id},{$set:updateUserCode},(err,result)=>{
-                                    if(err){
-                                      reject(err);
-                                    }else {
-                                      console.log(result,"resultupdateCodeById")
-                                      resolve(result);
-                                    }
-                                })
-                            })
                         }
                     })
                 }
+              return new Promise((resolve,reject)=>{
+                console.log(updateUserCode)
+                user.update({_id:id},{$set:updateUserCode},(err,_result)=>{
+                  if(err){
+                    reject(err);
+                  }else {
+                    console.log('更新用户code');
+                    resolve(result);
+                  }
+                })
+              })
             }
         })
     }else{
+      console.log('没有from字段');
         return new Promise((resolve,reject)=>{
             user.update({_id:id},{$set:updateUserCode},(err,result)=>{
                 if(err){
@@ -215,11 +217,11 @@ module.exports = (req,res,next)=>{
     if(!req.query.code){
         res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wx.appId}&redirect_uri=${url+req.originalUrl}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect`);
     }else{
-
         getUserInfo(req.query.code,req.query.from)
+
             .then((userInfo)=>{
-              console.log(userInfo.parent,"to")
-                res.render('index',{title:userInfo.wxName,id:userInfo._id,parent:userInfo.parent,wxImage:userInfo.wxImage});
+                date = moment(new Date).format('a|HH:mm').split('|');
+                res.render('index',{title:"聊天",id:userInfo._id,parent:userInfo.parent,wxImage:userInfo.wxImage,date:date});
             })
     }
 }
