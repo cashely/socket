@@ -98,6 +98,32 @@ function editMasterInfo(obj,id){
     })
 }
 
+//根据id组查询用户信息以及最新数据列表
+function getUserList(ids,masterId){
+    let list = [],promiseArr = [];
+    function getSingle(id){
+        return user.findOne().where({_id:id}).exec((err,userInfo)=>{
+            if(err){
+                throw new Error(err);
+            }else{
+                userInfo = userInfo.toObject();
+                return chat.findOne().where({$or:[{form:id,to:masterId},{from:masterId,to:id}]}).sort({date:1}).exec((err,message)=>{
+                    if(err){
+                        throw new Error(err)
+                    }else{
+                        userInfo.lastMessage = message;
+                        return userInfo;
+                    }
+                })
+            }
+        })
+    }
+    ids.forEach((item)=>{
+        promiseArr.push(getSingle(item))
+    });
+    return promiseAll(promiseArr);
+}
+
 module.exports = {
     index:(req,res,next)=>{
         getFriends(req.query.id)
@@ -198,6 +224,22 @@ module.exports = {
     qrcode:(req,res,next)=>{
         qrcode.toDataURL(`${url}?from=${req.params.id}`,(err,image)=>{
             res.render('qrcode',{url:image})
+        })
+    },
+    userList:(req,res,next)=>{
+        getUserList(JSON.parse(req.query.ids),req.params.id)
+        .then((result)=>{
+            res.json({
+                statu:1,
+                datas:result,
+                msg:'获取用户列表成功!'
+            })
+        })
+        .catch((err)=>{
+            res.json({
+                statu:0,
+                msg:'获取用户列表失败!'
+            })
         })
     }
 }

@@ -23,10 +23,15 @@ module.exports = (app)=>{
 
     app.put('/addUser',require('./routes/users').add);
 
+    app.get('/getUserInfoStatu/:id',require('./routes/users').statu)
+
     //添加诊疗卡号
     app.post('/addCrad/:id',require('./routes/users').addCrad);
 
     app.put('/addMaster',require('./routes/master').add);
+
+    //根据masterId查询用户信息以及最新消息
+    app.get('/userList/:id',require('./routes/master').userList);
 
     app.get('/history',require('./routes/message').history);
 

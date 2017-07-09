@@ -172,6 +172,7 @@ io.on('connection',socketioJwt.authorize({
                 groups.push({
                     _id:user._id,
                     name:user.wxName,
+                    image:user.wxImage,
                     id:socket.id,
                     wxId:user.wxId
                 });
@@ -180,6 +181,7 @@ io.on('connection',socketioJwt.authorize({
                     _id:user._id,
                     name:user.wxName,
                     id:socket.id,
+                    image:user.wxImage,
                     wxId:user.wxId
                 }
 
@@ -236,7 +238,7 @@ io.on('connection',socketioJwt.authorize({
                 for(let i =0,l=groups.length;i<l;i++){
                     console.log(message.to,groups[i]._id);
                     if(message.to == groups[i]._id){
-                        return groups[i].id;
+                        return groups[i];
                     }
                 }
             })();
@@ -254,11 +256,11 @@ io.on('connection',socketioJwt.authorize({
                 //向对应的id发送消息
                 console.log('需要发送消息的id为:'+sid);
                 fn('发送信息成功!');
-                socket.to(sid).emit('messages',{from:userInfo.name,info:_m})
+                socket.to(sid.id).emit('messages',{from:userInfo.name,info:_m,user:sid});
             }
         }else{
             //向所有用户发送信息
-            socket.broadcast.emit('messages',{from:userInfo.name,info:message.info})
+            socket.broadcast.emit('messages',{from:userInfo.name,info:message.info,user:sid})
         }
 
 
