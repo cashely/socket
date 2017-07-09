@@ -130,17 +130,44 @@ function updateCodeById(id,code,from){
     }
     if(!!from){
         updateUserCode.parent = from;
-    }
-    return new Promise((resolve,reject)=>{
-        user.update({_id:id},{$set:updateUserCode},(err,result)=>{
+        user.findOne().where({_id:from}).exec((err,result)=>{
             if(err){
-              reject(err);
-            }else {
-              console.log(result,"resultupdateCodeById")
-              resolve(result);
+                throw new Error(err)
+            }else{
+                if(result.friends.indexOf(id)=== -1){
+                    result.friends.push(id);
+                    result.markModified('friends');
+                    result.save((err,_r)=>{
+                        if(err){
+                            throw new Error(err);
+                        }else{
+                            return new Promise((resolve,reject)=>{
+                                user.update({_id:id},{$set:updateUserCode},(err,result)=>{
+                                    if(err){
+                                      reject(err);
+                                    }else {
+                                      console.log(result,"resultupdateCodeById")
+                                      resolve(result);
+                                    }
+                                })
+                            })
+                        }
+                    })
+                }
             }
         })
-    })
+    }else{
+        return new Promise((resolve,reject)=>{
+            user.update({_id:id},{$set:updateUserCode},(err,result)=>{
+                if(err){
+                  reject(err);
+                }else {
+                  console.log(result,"resultupdateCodeById")
+                  resolve(result);
+                }
+            })
+        })
+    }
 }
 
 function getUserInfoFromDb(openId){
