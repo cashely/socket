@@ -23,6 +23,8 @@ module.exports = (app)=>{
 
     app.put('/addUser',require('./routes/users').add);
 
+    app.get('/getUserInfoStatu/:id',require('./routes/users').statu)
+
     //添加诊疗卡号
     app.post('/addCrad/:id',require('./routes/users').addCrad);
 

@@ -170,5 +170,31 @@ module.exports = {
                 msg:err
             })
         })
+    },
+    statu:(req,res,next)=>{
+        getUserFromDb(req.params.id)
+        .then((result)=>{
+            return result.toObject()
+        })
+        .then(result=>{
+            if(!result.name || !result.phone || !result.name || !result.hospitalId){
+                return res.json({
+                    statu:1,
+                    datas:true,
+                    msg:'用户信息缺少字段'
+                })
+            }else{
+                return res.json({
+                    statu:1,
+                    datas:false
+                })
+            }
+        })
+        .catch((err)=>{
+            return res.json({
+                statu:0,
+                msg:'查询用户信息状态出错!'
+            })
+        })
     }
 }
