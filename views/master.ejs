@@ -216,6 +216,7 @@
                     //监听消息
                     socket.on('messages',function(message){
                         console.log('您收到来自'+message.from+'的消息:'+message.info);
+                        if(message.info == 'close'){};
                         var dialog="";
                         dialog+='<div class="chatContent-box chatContent-left"><a onClick="showUserInfo()" href="javascript:void(0)" class="chatContent-logo user-logo">';
                         dialog+='<img src="/images/user.png" class="chatContent-img">';
@@ -257,12 +258,18 @@
 
         }
 
-        function sendMasterMessage(){
-            if($(".sendInfo-content").val() == "") return;
+        function sendMasterMessage(type){
+            var _m;
+            _m = $(".sendInfo-content").val();
+            if(_m == "") return;
             if(!socket){
                 return alert('还没有建立连接呢亲爱的!');
             }
-            socket.emit('message',{to:$(".chat-list .active").attr("id"),info:document.getElementById('message').value},function(result){
+            if(!!type){
+                _m = 'close';
+            }
+
+            socket.emit('message',{to:$(".chat-list .active").attr("id"),info:_m},function(result){
                 console.log(result)
                 if(result){
                     var dialog="";
@@ -329,7 +336,7 @@
             })
         }
 
-        connect()
+        connect();
     </script>
     <script>
     $(".chat-list .list-item").click(function() {
