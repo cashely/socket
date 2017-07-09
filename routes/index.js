@@ -8,8 +8,8 @@ function getUserInfo(code,from){
                 if(!!codeResult){
                     return codeResult;
                 }else{
-                    getOpenIdFromCode(code)
-                        .then((result)=>{
+                    return getOpenIdFromCode(code)
+                            .then((result)=>{
                             console.log('通过opendId获取用户信息');
                             return getUserInfoFromOpenId(result.openid)
                                     .then((oUserInfo)=>{
@@ -94,7 +94,7 @@ function updateMasterFriends(id,whoId){
             throw new Error(err);
         }else{
             if(!!result){
-                if(result.friends.indexof(whoId)=== -1){
+                if(result.friends.indexOf(whoId)=== -1){
                     result.friends.push(whoId);
                     result.markModified('friends');
                     result.save((err,_r)=>{
@@ -128,9 +128,10 @@ function updateCodeById(id,code){
     return new Promise((resolve,reject)=>{
         user.update({_id:id},{$set:{wxCode:code}},(err,result)=>{
             if(err){
-                reject(err);
-            }else{
-                resolve(result);
+              reject(err);
+            }else {
+              console.log(result,"resultupdateCodeById")
+              resolve(result);
             }
         })
     })
@@ -184,8 +185,8 @@ module.exports = (req,res,next)=>{
 
         getUserInfo(req.query.code,req.query.from)
             .then((userInfo)=>{
-                
-                res.render('index',{title:userInfo.wxName,id:userInfo._id,parent:userInfo.parent});
+              console.log(userInfo.parent,"to")
+                res.render('index',{title:userInfo.wxName,id:userInfo._id,parent:userInfo.parent,wxImage:userInfo.wxImage});
             })
     }
 }

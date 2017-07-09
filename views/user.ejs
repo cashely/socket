@@ -1,0 +1,85 @@
+<% include ./common/header %>
+    <div class="container">
+       <div class="user card">
+           <img src=" <% if(!datas.wxImage){ %>/images/user.png <%}else{%><%=datas.wxImage %><% }%>" class="user-img">
+           <div class="card-right">
+                <div class="user-name"> <%=datas.wxName%></div>
+                <div class="user-wx">微信号：123456</div>
+           </div>
+       </div>
+        <a href="/userInfo?id=<%= datas._id%>" class="card icon-right">
+            完善信息
+        </a>
+        <ul class="card-list">
+            <li class="card-item">诊疗卡管理 <a class="card-item-add">添加</a></li>
+            <% datas.crads.forEach(function(item){%>
+                <li class="card-item card-row">
+                    <span class="card-item-left">诊疗卡1</span>
+                    <div class="card-item-content">
+                        <div class="card-row-item"><input type="text" class="card-row-item-input hospitalName" placeholder="请输入医院名称" value="<%=item.hospitalName%>"></div>
+                        <div class="card-row-item medicalCardId"><input type="text" class="card-row-item-input cradId" placeholder="请输入卡号" value="<%=item.id%>"></div>
+                    </div>
+                </li>
+            <%})%>
+        </ul>
+    </div>
+<script>
+    /*function getUserInfo(id){
+        fetch('/getUserInfo/'+id, {
+            method:'GET'
+        }).then((result)=>{
+            return result.json();
+        }).then((result)=>{
+            console.log( result)
+            if(result.statu == 1){
+                $(".user-img").attr("src",result.datas.wxImage);
+                $(".user-name").text(result.datas.wxName);
+            }
+        })
+    }*/
+    function addCrad(id){
+        fetch('/addCrad/'+id, {
+            method:'POST',
+            body: JSON.stringify({
+                cradId:$(".card-list:last .cradId").val(),
+                hospitalName:$(".card-list:last .hospitalName").val()
+            }),
+            headers:{
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            },
+            credentials: "include"
+        }).then((result)=>{
+            return result.json();
+        }).then((result)=>{
+            console.log( result)
+            if(result.statu == 1){
+                $(".card-item-add").text("添加");
+            }
+        })
+    }
+
+    $(".card-item-add").click(function(){
+        if ($(this).hasClass("active")){
+            if($(".card-list:last .cradId").val() != "" && $(".card-list:last .hospitalName").val()  != ""){
+                $(this).removeClass("active");
+                addCrad(url2obj().id);
+            }
+        }else{
+            $(this).addClass("active");
+            var card="";
+            card +='<ul class="card-list"><li class="card-item card-row"><span class="card-item-left">';
+            card +='诊疗卡'+1;
+            card +='</span>';
+            card +='<div class="card-item-content">';
+            card +='<div class="card-row-item"><input type="text" class="card-row-item-input hospitalName" placeholder="请输入医院名称"></div>';
+            card +='<div class="card-row-item medicalCardId"><input type="text" class="card-row-item-input cradId" placeholder="请输入卡号"></div>';
+            card +='</div> </li> </ul>';
+            $(".container").append(card);
+            $('.container').scrollTop($('.container')[0].scrollHeight);
+            $(this).text("保存");
+        }
+    })
+    /*getUserInfo(url2obj().id)*/
+</script>
+<% include ./common/footer %>

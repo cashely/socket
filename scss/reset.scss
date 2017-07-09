@@ -1,0 +1,72 @@
+@charset "utf-8";
+/*通用*/
+html{
+  height: 100%;
+}
+body {
+  font: 12px/1 "Microsoft YaHei" ,Arial ,sans-serif;
+  margin:0;
+  padding:0;
+  width: 100%;
+  height: 100%;
+  color:#333;
+}
+ul,li,p,h1,h2,h3,h4,h5,h6,dl,dt,dd {
+  margin:0;
+  padding:0;
+  border:none;
+  list-style:none;
+}
+input {
+  font-family:"Microsoft YaHei" ;
+  border:none;
+  //box-shadow: none;
+  //-webkit-appearance: none;//清除 iOS 下 input 表单的阴影
+}
+button{
+  font-family:"Microsoft YaHei" ;
+}
+.lf   {float:left;}
+.rt  {float:right;}
+.clear  {clear:both;}
+img{  border: none;}
+a{
+  color:#333;
+  text-decoration:none;
+}
+.tac{
+  text-align: center;
+}
+.tal{
+  text-align: left;
+}
+.centerAll{
+  display: flex;
+  display: -webkit-flex;
+  align-items: center;
+  -webkit-align-items: center;
+  justify-content: center;
+  -webkit-justify-content: center;
+}
+.none{
+  display: none;
+}
+.block{
+  display: block;
+}
+/*******************修改input placeholder颜色***************************/
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color: #999;
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color: #999;
+}
+
+input:-ms-input-placeholder{
+  color: #999;
+}
+
+input::-webkit-input-placeholder{
+  color: #999;
+}

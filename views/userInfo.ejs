@@ -1,0 +1,93 @@
+<% include ./common/header %>
+    <div class="container">
+        <ul class="card-list">
+            <li class="card-item  card-row">
+                <span class="card-item-left">手机号码</span>
+                <div class="card-item-content">
+                    <div class="card-row-item"><input type="text" class="card-row-item-input phone" placeholder="请输入您的手机号码" value='<%=datas.phone%>' disabled></div>
+                </div>
+            </li>
+        </ul>
+        <ul class="card-list">
+            <li class="card-item  card-row">
+                <span class="card-item-left">真实姓名</span>
+                <div class="card-item-content">
+                    <div class="card-row-item"><input type="text" class="card-row-item-input name" placeholder="请输入您的真实姓名" value='<%=datas.name%>' disabled></div>
+                </div>
+            </li>
+            <li class="card-item  card-row">
+                <span class="card-item-left">性别</span>
+                <div class="card-item-content">
+                    <div class="card-row-item gender">
+                        <div class="select" name=1>男</div>
+                        <div class="select active" name=0>女</div>
+                        <input type="text" class="card-row-item-input select-input" placeholder="请输入您的性别" value='<% if(datas.sex == 0){ %>女<%}else{%>男<% }%>' disabled>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="card-list">
+            <li class="card-item  card-row">
+                <span class="card-item-left">住院号</span>
+                <div class="card-item-content" >
+                    <div class="card-row-item"><input type="text" class="card-row-item-input hospitalId" placeholder="请输入您的住院号" value='<%=datas.hospitalId%>' disabled></div>
+                </div>
+            </li>
+        </ul>
+        <div class="btn btn-saveUserInfo active">编辑</div>
+    </div>
+<script>
+   if('<%=datas.phone%>'==''&&'<%=datas.name%>'==''&&'<%=datas.sex%>'==0&&'<%=datas.hospitalId%>'==''){
+       $('.card-row-item-input').attr("disabled",false);
+       $(".btn-saveUserInfo").removeClass("active").text("保存");
+       $(".select").show();
+       $(".select-input").hide();
+   }else{
+       $(".select").hide();
+       $(".select-input").show();
+   }
+    $(".select").click(function () {
+        if ($(this).hasClass("active")) return false;
+        $(this).addClass("active").siblings().removeClass("active");
+    });
+    $(".btn-saveUserInfo").click(function () {
+        if( $(".btn-saveUserInfo").hasClass("active")){
+            $('.card-row-item-input').attr("disabled",false);
+            $('.card-row-item-input').first().select();
+            if( $(".select-input").val() == "男"){
+                $(".select").show().siblings().removeClass("active");
+                $(".select").first().addClass("active")
+            }else{
+                $(".select").show().siblings().removeClass("active");
+                $(".select").last().addClass("active")
+            }
+            $(".select-input").hide();
+            $(".btn-saveUserInfo").removeClass("active").text("保存");
+            return false;
+        }
+        fetch('/editUserInfo/'+url2obj().id, {
+            method:'POST',
+            body: JSON.stringify({
+                id:url2obj().id,
+                phone:$(".phone").val(),
+                name:$(".name").val(),
+                sex:$(".gender .active").attr("name"),
+                hospitalId:$(".hospitalId").val()
+            }),
+            headers:{
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            }
+        }).then((result)=>{
+            return result.json();
+        }).then((result)=>{
+            if(result.statu == 1){
+                $(".select").hide();
+                $(".select-input").val( $(".gender .active").attr("name") == 0 ? "女" : "男").show();
+                $('.card-row-item-input').attr("disabled",true);
+                $(".btn-saveUserInfo").addClass("active").text("编辑")
+            }
+        })
+    });
+</script>
+<% include ./common/footer %>
