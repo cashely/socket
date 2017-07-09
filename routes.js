@@ -56,9 +56,7 @@ module.exports = (app)=>{
     //药师信息
     app.get('/pharmacist',require('./routes/getMasterInfo'));
     //患者评分
-    app.get('/grade',function(req,res,next){
-        res.render('grade',{title:"评分"});
-    });
+    app.get('/grade',require('./routes/getUserInfo').grade);
     //评分成功
     app.get('/gradeSucceed',function(req,res,next){
         res.render('gradeSucceed',{title:"评分",id:req.query.id});

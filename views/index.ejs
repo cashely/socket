@@ -1,36 +1,36 @@
 <% include ./common/header %>
 <div class="container home">
     <div class="top">
-        <div class="btn-time">上午11:59</div>
+        <div class="btn-time"><% if(date[0] == 'pm'){%>下午<%}else{%>上午<%}%><%=date[1]%></div>
     </div>
     <div class="dialog">
-        <div class="dialog-box dialog-left">
-            <a href="/pharmacist?id=<%= parent%>" class="dialog-logo">
-                <img src="/images/hospital.png" class="dialog-img">
-            </a>
-            <div class="dialog-content">
-                <span class="dialog-text">您好，从专业角度出发，为避免信息缺失造成风险管理遗漏，请您在个人中心完善资料，方便药师了解您的基础健康信息。</span>
-                <!--<a class="dialog-link">-->
-                    <!--<img src="/images/icon-arrow.png" class="icon-arrow"> 关注微信公众号-->
+        <!--<div class="dialog-box dialog-left">-->
+            <!--<a href="/pharmacist?id=<%= parent%>" class="dialog-logo">-->
+                <!--<img src="/images/hospital.png" class="dialog-img">-->
+            <!--</a>-->
+            <!--<div class="dialog-content">-->
+                <!--<span class="dialog-text">您好，从专业角度出发，为避免信息缺失造成风险管理遗漏，请您在个人中心完善资料，方便药师了解您的基础健康信息。</span>-->
+                <!--&lt;!&ndash;<a class="dialog-link">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<img src="/images/icon-arrow.png" class="icon-arrow"> 关注微信公众号&ndash;&gt;-->
+                <!--&lt;!&ndash;</a>&ndash;&gt;-->
+                <!--<a href="/userInfo?id=<%= id%>" class="dialog-link">-->
+                    <!--<img src="/images/icon-arrow.png" class="icon-arrow"> 完善个人资料-->
                 <!--</a>-->
-                <a href="/userInfo?id=<%= id%>" class="dialog-link">
-                    <img src="/images/icon-arrow.png" class="icon-arrow"> 完善个人资料
-                </a>
-            </div>
-        </div>
-        <div class="dialog-box dialog-left">
-            <a href="/pharmacist?id=<%= parent%>" class="dialog-logo">
-                <img src="/images/hospital.png" class="dialog-img">
-            </a>
-            <div class="dialog-content">
-                    <span class="dialog-text">
-                        感谢您的咨询！希望我们的服务能解决您的问题。赶紧去给黄药师的服务评分吧！
-                    </span>
-                <a class="dialog-link" href="/grade?id=<%= parent%>">
-                    <img src="/images/icon-arrow.png" class="icon-arrow"> 去评分
-                </a>
-            </div>
-        </div>
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="dialog-box dialog-left">-->
+            <!--<a href="/pharmacist?id=<%= parent%>" class="dialog-logo">-->
+                <!--<img src="/images/hospital.png" class="dialog-img">-->
+            <!--</a>-->
+            <!--<div class="dialog-content">-->
+                    <!--<span class="dialog-text">-->
+                        <!--感谢您的咨询！希望我们的服务能解决您的问题。赶紧去给黄药师的服务评分吧！-->
+                    <!--</span>-->
+                <!--<a class="dialog-link" href="/grade?id=<%= parent%>">-->
+                    <!--<img src="/images/icon-arrow.png" class="icon-arrow"> 去评分-->
+                <!--</a>-->
+            <!--</div>-->
+        <!--</div>-->
     </div>
     <div class="toolbar-bottom">
         <input type="text" class="search" id="message">
@@ -73,7 +73,8 @@
         var socket,id="<%= id%>";
         function connect(){
             if(!!socket){
-                return alert('您已经加入了聊天!');
+//                alert('您已经加入了聊天!')
+                return;
             }
             //监听验证权限事件
              getToken().then((result)=>{
@@ -97,10 +98,9 @@
             });
 
             socket.on('connect',function(){
-                console.log(socket);
-
-               getHistoryMessage()
-
+                if('<%= parent%>' != 'undefined'&&'<%= parent%>' != ''){
+                    getHistoryMessage()
+                }
 
 
             })
@@ -114,11 +114,18 @@
                 //监听消息
                 socket.on('messages',function(message){
                     console.log('您收到来自'+message.from+'的消息:'+message.info);
-                    if(message.info == 'close'){}
                     var dialog="";
-                    dialog +='<div class="dialog-box dialog-left"><a href="/pharmacist?id=<%= parent%>"  class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a><div class="dialog-content"><span class="dialog-text">';
-                    dialog += message.info;
-                    dialog += '</span> </div> </div>';
+                    if(message.info == 'close'){
+                        dialog +='<div class="dialog-box dialog-left"><a href="/pharmacist?id=<%= parent%>" class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a>';
+                        dialog +='<div class="dialog-content"><span class="dialog-text">感谢您的咨询！希望我们的服务能解决您的问题。赶紧去给黄药师的服务评分吧！</span>';
+                        dialog +='<a class="dialog-link" href="/grade?id=<%= parent%>">';
+                        dialog +='<img src="/images/icon-arrow.png" class="icon-arrow"> 去评分';
+                        dialog +='</a> </div> </div>';
+                    }else{
+                        dialog +='<div class="dialog-box dialog-left"><a href="/pharmacist?id=<%= parent%>"  class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a><div class="dialog-content"><span class="dialog-text">';
+                        dialog += message.info;
+                        dialog += '</span> </div> </div>';
+                    }
                     $('.dialog').append(dialog);
                     $('.dialog').scrollTop($('.dialog')[0].scrollHeight);
                 })
@@ -143,19 +150,17 @@
 
                 //监听离线消息事件
                 socket.on('offLineMessage',function(list){
-                    alert(list.length);
+//                    alert(list.length);
                 })
             })
             socket.emit('authenticate',{token:result.datas})
             })
 
-
-
-
         }
         function sendUserMessage(){
             if(!socket){
-                return alert('还没有建立连接呢亲爱的!');
+//                alert('还没有建立连接呢亲爱的!')
+                return ;
             }
             socket.emit('message',{to:'<%= parent%>',info:document.getElementById('message').value},function(result){
                 if(result){
@@ -165,25 +170,50 @@
                     dialog += '</span> </div> </div>';
                     $('.dialog').append(dialog);
                     $('.dialog').scrollTop($('.dialog')[0].scrollHeight);
-                    alert(result);
+//                    alert(result);
                 }
             })
         }
 
-
+        function getUserInfoStatu(){
+            fetch('/getUserInfoStatu/'+id,{method:'GET'})
+            .then((result)=>{
+                    return result.json()
+            })
+            .then((result)=>{
+                if(result.statu == 1){
+                    console.log(result.datas,"sssss")
+                    if(result.datas){
+                        var dialog="";
+                        dialog+='<div class="dialog-box dialog-left">'
+                        dialog+='  <a href="/pharmacist?id=<%= parent%>" class="dialog-logo">'
+                        dialog+='      <img src="/images/hospital.png" class="dialog-img">'
+                        dialog+='   </a>'
+                        dialog+='   <div class="dialog-content">'
+                        dialog+='       <span class="dialog-text">您好，从专业角度出发，为避免信息缺失造成风险管理遗漏，请您在个人中心完善资料，方便药师了解您的基础健康信息。</span>'
+                        dialog+='      <a href="/userInfo?id=<%= id%>" class="dialog-link">'
+                        dialog+='         <img src="/images/icon-arrow.png" class="icon-arrow"> 完善个人资料'
+                        dialog+='     </a>'
+                        dialog+=' </div>'
+                        dialog+='</div>'
+                        $('.dialog').html(dialog);
+                    }
+                }
+            })
+        }
         //获取与当前人员的聊天记录
         function getHistoryMessage(to){
             var to = '<%= parent%>';
             console.log(to,"to")
             if(!id){
-                return alert('您暂时还没连接!');
+//                alert('您暂时还没连接!')
+                return;
             }
             fetch(`/history?from=${id}&to=${to}`,{method:'GET'})
                 .then((result)=>{
                     return result.json()
                 })
                 .then((result)=>{
-                    console.log(result)
                     if(result.statu === 0){
                         return alert(result.msg);
                     }else{
@@ -191,7 +221,7 @@
                     }
                 })
                 .then((result)=>{
-                    if(result.datas.length == 0) return ;
+                    if(result == undefined || result.datas.length == 0) return ;
                     var dialog="";
                     var  to = "";
                     $(result.datas).each(function(index,ele){
@@ -201,17 +231,26 @@
                             dialog += ele.message;
                             dialog += '</span> </div> </div>';
                         }else{
-                            dialog +='<div class="dialog-box dialog-left"><a href="/pharmacist?id=<%= parent%>"  class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a><div class="dialog-content"><span class="dialog-text">';
-                            dialog += ele.message;
-                            dialog += '</span> </div> </div>';
+                            if(ele.message == 'close'){
+                                dialog +='<div class="dialog-box dialog-left"><a href="/pharmacist?id=<%= parent%>" class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a>';
+                                dialog +='<div class="dialog-content"><span class="dialog-text">感谢您的咨询！希望我们的服务能解决您的问题。赶紧去给黄药师的服务评分吧！</span>';
+                                dialog +='<a class="dialog-link" href="/grade?id=<%= parent%>">';
+                                dialog +='<img src="/images/icon-arrow.png" class="icon-arrow"> 去评分';
+                                dialog +='</a> </div> </div>';
+                            }else{
+                                dialog +='<div class="dialog-box dialog-left"><a href="/pharmacist?id=<%= parent%>"  class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a><div class="dialog-content"><span class="dialog-text">';
+                                dialog += ele.message;
+                                dialog += '</span> </div> </div>';
+                            }
                         }
                     })
-                    $('.dialog').append(dialog);
+                    $('.dialog').html(dialog);
                     $('.dialog').scrollTop($('.dialog')[0].scrollHeight);
                     return to;
                 }).then((result)=>{
+                    getUserInfoStatu();
                     getUserInfo();
-                    getMasteInfo(to)
+                    getMasteInfo('<%= id%>')
                 })
 
         }

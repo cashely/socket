@@ -6,13 +6,13 @@
                 <div class="user-name"><%=datas.wxName%></div>
                 <!--<div class="user-wx">副主任药师－华侨医院</div>-->
            </div>
-           <img src="/images/pharmacist-wx.jpg" class="pharmacist-wx">
+           <img src="<%= qrcode%>" class="pharmacist-wx">
        </div>
         <ul class="card-list">
             <li class="card-item  card-row">
                 <span class="card-item-left">服务人次</span>
                 <div class="card-item-content">
-                    <div class="card-row-item">1380人</div>
+                    <div class="card-row-item"><% if(!!datas.friends.length){ %><%=datas.friends.length%><%}else{%>0<% }%>人</div>
                 </div>
             </li>
             <li class="card-item  card-row">

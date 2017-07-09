@@ -25,5 +25,11 @@ module.exports ={
       .then((result)=>{
         res.render('userInfo',{title:"完善个人信息",datas:result});
       })
+  },
+  grade:(req,res,next)=>{
+    getUserFromDb(req.query.id)
+      .then((result)=>{
+        res.render('grade',{title:"评分",datas:result});
+      })
   }
 }
