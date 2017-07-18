@@ -154,9 +154,9 @@
         function upUserList(list){
             return  fetch('/userList/<%=datas._id%>?ids='+JSON.stringify(list),{
                   method:'GET'
-              }).then((result)=>{
+              }).then(function(result){
                   return result.json();
-                }).then((result)=>{
+              }).then(function(result){
                   if(result.statu == 1){
                     var item="";
                       $(result.datas).each(function(index,ele){
@@ -184,9 +184,9 @@
             console.log(id)
             fetch('/getUserInfo/'+id,{
                 method:'GET'
-            }).then((result)=>{
+            }).then(function(result){
                 return result.json();
-            }).then((result)=>{
+            }).then(function(result){
                 console.log(result,"sss")
                 if(result.statu == 1){
                     $(".user-popup .user-img").attr("src",result.datas.wxImage);
@@ -204,9 +204,9 @@
         function getMasterInfo(id){
             fetch('/getUserInfo/'+id,{
                 method:'GET'
-            }).then((result)=>{
+            }).then(function(result){
                 return result.json();
-            }).then((result)=>{
+            }).then(function(result){
                 if(result.statu == 1){
                     $(".hospital-popup .phone").text(result.datas.phone || "无");
                     $(".hospital-popup .serviceNum").text(!!(result.datas.friends.length)?result.datas.friends.length:0);
@@ -217,7 +217,7 @@
             })
         }
         function getToken(){
-            return fetch('/token/master/<%=datas.phone%>/<%=datas.password%>',{method:'GET'}).then((result)=>{
+            return fetch('/token/master/<%=datas.phone%>/<%=datas.password%>',{method:'GET'}).then(function(result){
                         return result.json();
                     })
         }
@@ -228,12 +228,12 @@
                 return;
             }
             //监听验证权限事件
-            getToken().then((result)=>{
+            getToken().then(function(result){
                 console.log(result)
                 if(result.statu === 0){
                     return alert(result.msg);
                 }
-                socket = io.connect('http://192.168.1.28:3006',{path:'/socket'});
+                socket = io.connect('http://socket1.immo.cn',{path:'/socket'});
                  //console.log(socket);
 
                 socket.on('error',function(error){
@@ -305,11 +305,11 @@
                     socket.on('userList',function(list){
                         fetch('/getUserInfo/<%=datas._id%>',{
                             method:'GET'
-                        }).then((result)=>{
+                        }).then(function(result){
                             return result.json();
-                        }).then((result)=>{
+                        }).then(function(result){
                             if(result.statu == 1){
-                                upUserList(result.datas.friends).then(()=>{
+                                upUserList(result.datas.friends).then(function(){
                                     getHistoryMessage();
                                 })
                             }
@@ -377,10 +377,10 @@
                 return;
             }
             fetch(`/history?from=<%=datas._id%>&to=${to}`,{method:'GET'})
-                .then((result)=>{
+                .then(function(result){
                     return result.json()
                 })
-                .then((result)=>{
+                .then(function(result){
                         console.log(result)
                     if(result.statu === 0){
                         return alert(result.msg);
@@ -388,7 +388,7 @@
                         return result;
                     }
                 })
-                .then((result)=>{
+                .then(function(result){
                     if(result.datas.length == 0) return ;
                     var dialog="";
                     $(result.datas).each(function(index,ele){
@@ -415,7 +415,7 @@
                     $('.chatContent').html(dialog);
                     $('.chatContent').scrollTop($('.chatContent')[0].scrollHeight);
                     return "";
-                }) .then(()=>{
+                }) .then(function(){
                     if(!!$(".chat-list .active").attr("id")){
                         getUserInfo($(".chat-list .active").attr("id"));
                     }
@@ -460,9 +460,9 @@
                 'Accept':'application/json',
                 'Content-Type':'application/json'
             }
-        }).then((result)=>{
+        }).then(function(result){
                 return result.json();
-        }).then((result)=>{
+        }).then(function(result){
                 if(result.statu == 1){
                     $('.note-input').attr("disabled",true);
                 }
@@ -489,9 +489,9 @@
                     'Accept':'application/json',
                     'Content-Type':'application/json'
                 }
-                }).then((result)=>{
+            }).then(function(result){
                     return result.json();
-                }).then((result)=>{
+                }).then(function(result){
                     if(result.statu == 1){
                     $('.gender .gender-text').text( $('.gender-selects .active').text()).show();
                     $('.gender .gender-selects').hide();
