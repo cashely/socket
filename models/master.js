@@ -30,7 +30,7 @@ const Schema = new mongoose.Schema({
     messages:[],
     regDate:{
         type:Date,
-        default:new Date()
+        default:Date.now()
     },
     login:{
         type:Boolean,

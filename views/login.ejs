@@ -14,7 +14,7 @@
                     <label class="login-form-item password">
                         <input type="text" id="password" class="login-form-input">
                     </label>
-                    <div class="savePassword">
+                    <div class="saveUserLogin">
                         <input type="checkbox" class="checkbox"> 记住密码
                     </div>
                     <div class="btn-login" onClick="connect()">登录</div>
@@ -26,24 +26,45 @@
         </div>
     </div>
 <script>
+    var socket,id;
+    var $phone = $('#phone'),$password = $('#password');
+    //渲染用户登录信息
+    function renderUserInfo(){
+        var phone = localStorage.getItem("phone");
+        var password = localStorage.getItem("password");
+        if(!!phone && !!password){
+            $phone.val(phone);
+            $password.val(password);
+            $('.saveUserLogin .checkbox').attr("checked","checked");
+        }
+    }
+    //保存用户登录信息
+    function saveUserLoginFn(){
+        if($('.saveUserLogin .checkbox').is(":checked")){
+            if($phone.val() == "" || $password.val() == "") return;
+            localStorage.setItem("phone", $phone.val().replace(/(^\s*)|(\s*$)/g,''));
+            localStorage.setItem("password", $password.val().replace(/(^\s*)|(\s*$)/g,''));
+        }else{
+            localStorage.removeItem("phone");
+            localStorage.removeItem("password");
+        }
+    }
+
     function getToken(){
-        return fetch('/token/master/'+document.getElementById('phone').value+'/'+document.getElementById('password').value,{method:'GET'}).then((result)=>{
+        return fetch('/token/master/'+document.getElementById('phone').value+'/'+document.getElementById('password').value,{method:'GET'}).then(function(result){
                     return result.json();
         })
     }
-
-    var socket,id;
     function connect(){
         if(!!socket){
             return alert('您已经加入了聊天!');
         }
         //监听验证权限事件
-        getToken().then((result)=>{
-
+        getToken().then(function(result){
             if(result.statu === 0){
                 return alert(result.msg);
             }
-            socket = io.connect('http://192.168.1.28:3006',{path:'/socket'});
+            socket = io.connect('http://socket1.immo.cn',{path:'/socket'});
             socket.on('error',function(error){
                 console.log(error);
             });
@@ -68,6 +89,7 @@
                 socket.on('connectId',function(rid){
                     // alert('您的昵称为:'+message.info);
                     id = rid;
+                    saveUserLoginFn();
                     window.location.href= "/master?id="+id;
                 });
                 //监听消息
@@ -101,5 +123,6 @@
             socket.emit('authenticate',{token:result.datas})
         })
     }
+    renderUserInfo();
 </script>
 <% include ./common/footer %>

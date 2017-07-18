@@ -39,7 +39,7 @@ let Schema = new mongoose.Schema({
     },//诊疗卡
     regDate:{
         type:Date,
-        default:new Date()
+        default:Date.now()
     },//注册日期
     login:{
         type:Boolean,

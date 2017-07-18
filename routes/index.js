@@ -14,12 +14,13 @@ function getUserInfo(code,from){
                             return getUserInfoFromOpenId(result.openid)
                                     .then((oUserInfo)=>{
                                         if(!oUserInfo){
-                                            return getUserInfoFormWx(result.access_token,result.openid)
+                                            return getUserInfoFromWx(result.access_token,result.openid)
                                                     .then((_userInfo)=>{
                                                         _userInfo.openId = _userInfo.openid;
                                                         _userInfo.wxUsername = _userInfo.nickname;
                                                         _userInfo.wxImgUrl = _userInfo.headimgurl;
                                                         return saveUserInfo({
+                                                               subScribe:result.subScribe,
                                                                wxId:result.openid,
                                                                wxName:_userInfo.nickname,
                                                                wxImage:_userInfo.headimgurl,
@@ -34,7 +35,7 @@ function getUserInfo(code,from){
                                                            })
                                                     })
                                         }else{
-                                          console.log('通过openId更新code',oUserInfo);
+                                            console.log('通过openId更新code',oUserInfo);
                                             return updateCodeById(oUserInfo._id,code,from)
                                                     .then((result)=>{
                                                         return oUserInfo;
@@ -47,7 +48,6 @@ function getUserInfo(code,from){
                 }
             })
 }
-
 
 function getOpenIdFromCode(code){
     return new Promise((resolve,reject)=>{
@@ -62,7 +62,7 @@ function getOpenIdFromCode(code){
     })
 }
 
-function getUserInfoFormWx(accessToken,openId){
+function getUserInfoFromWx(accessToken,openId){
     return new Promise((resolve,reject)=>{
         request(`https://api.weixin.qq.com/sns/userinfo?access_token=${accessToken}&openid=${openId}&lang=zh_CN`,(err,response,body)=>{
             if(!err){
@@ -118,6 +118,7 @@ function getUserInfoByCode(code){
                 if(err){
                     throw new Error()
                 }else{
+                    console.log(result,"查询根据code查询用户表");
                     return result;
                 }
             })
@@ -129,7 +130,6 @@ function updateCodeById(id,code,from){
         wxCode:code
     }
     if(!!from){
-      console.log('有from字段');
         updateUserCode.parent = from;
      return user.findOne().where({_id:from}).exec((err,result)=>{
             if(err){
@@ -145,12 +145,10 @@ function updateCodeById(id,code,from){
                     })
                 }
               return new Promise((resolve,reject)=>{
-                console.log(updateUserCode)
                 user.update({_id:id},{$set:updateUserCode},(err,_result)=>{
                   if(err){
                     reject(err);
                   }else {
-                    console.log('更新用户code');
                     resolve(result);
                   }
                 })
@@ -158,13 +156,12 @@ function updateCodeById(id,code,from){
             }
         })
     }else{
-      console.log('没有from字段');
         return new Promise((resolve,reject)=>{
             user.update({_id:id},{$set:updateUserCode},(err,result)=>{
                 if(err){
                   reject(err);
                 }else {
-                  console.log(result,"resultupdateCodeById")
+                  console.log(result,"resultupdateCodeById");
                   resolve(result);
                 }
             })
@@ -218,10 +215,10 @@ module.exports = (req,res,next)=>{
         res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wx.appId}&redirect_uri=${url+req.originalUrl}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect`);
     }else{
         getUserInfo(req.query.code,req.query.from)
-
             .then((userInfo)=>{
+                console.log(userInfo,"用户信息");
                 date = moment(new Date).format('a|HH:mm').split('|');
-                res.render('index',{title:"聊天",id:userInfo._id,parent:userInfo.parent,wxImage:userInfo.wxImage,date:date});
+                res.render('index',{title:"聊天",userInfo:userInfo,id:userInfo._id,parent:userInfo.parent,wxImage:userInfo.wxImage,date:date});
             })
     }
 }

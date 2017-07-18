@@ -1,6 +1,6 @@
 module.exports = (app)=>{
     //微信认证
-    app.get('/MP_verify_WJGBT4nlrlvDmcg7.txt',require('./routes/wx').txt)
+    app.get('/MP_verify_WJGBT4nlrlvDmcg7.txt',require('./routes/wx').txt);
     /* GET home page. */
     app.get('/', require('./routes/index.js'));
 
@@ -23,7 +23,7 @@ module.exports = (app)=>{
 
     app.put('/addUser',require('./routes/users').add);
 
-    app.get('/getUserInfoStatu/:id',require('./routes/users').statu)
+    app.get('/getUserInfoStatu/:id',require('./routes/users').statu);
 
     //添加诊疗卡号
     app.post('/addCrad/:id',require('./routes/users').addCrad);
@@ -52,6 +52,10 @@ module.exports = (app)=>{
     //保存患者信息
     app.get('/saveUserInfo',function(req,res,next){
         res.render('saveUserInfo',{title:"完善个人信息"});
+    });
+    //药师列表
+    app.get('/masterList',function(req,res,next){
+        res.render('masterList',{title:"药师列表"});
     });
     //药师信息
     app.get('/pharmacist',require('./routes/getMasterInfo'));

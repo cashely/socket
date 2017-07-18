@@ -5,7 +5,7 @@ const users = require('./users.js');
 const socketioJwt = require('socketio-jwt');
 // io.set('origins','http://socket.immo.cn:3005');
 const fs = require('fs');
-const io = require('socket.io')(server,{path:'/socket'});
+const io = require('socket.io')(server,{path:'/socket',origins:'http://socket.immo.cn:*', "transports":['websocket', 'polling']});
 io.origins('*:*');
 const user = require('../models/user.js');
 
@@ -254,7 +254,7 @@ io.on('connection',socketioJwt.authorize({
                 return;
             }else{
                 //向对应的id发送消息
-                console.log('需要发送消息的id为:'+sid);
+                console.log('需要发送消息的id为:'+sid.id);
                 fn('发送信息成功!');
                 socket.to(sid.id).emit('messages',{from:userInfo.name,info:_m,user:userInfo});
             }
