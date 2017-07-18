@@ -5,7 +5,7 @@ const users = require('./users.js');
 const socketioJwt = require('socketio-jwt');
 // io.set('origins','http://socket.immo.cn:3005');
 const fs = require('fs');
-const io = require('socket.io')(server,{path:'/socket'});
+const io = require('socket.io')(server,{path:'/socket',origins:'http://socket.immo.cn:*'});
 io.origins('*:*');
 const user = require('../models/user.js');
 

@@ -27,7 +27,7 @@
     </div>
 <script>
     function getToken(){
-        return fetch('/token/master/'+document.getElementById('phone').value+'/'+document.getElementById('password').value,{method:'GET'}).then((result)=>{
+        return fetch('/token/master/'+document.getElementById('phone').value+'/'+document.getElementById('password').value,{method:'GET'}).then(function(result){
                     return result.json();
         })
     }
@@ -38,12 +38,12 @@
             return alert('您已经加入了聊天!');
         }
         //监听验证权限事件
-        getToken().then((result)=>{
+        getToken().then(function(result){
 
             if(result.statu === 0){
                 return alert(result.msg);
             }
-            socket = io.connect('http://192.168.1.28:3006',{path:'/socket'});
+            socket = io.connect('http://socket1.immo.cn',{path:'/socket'});
             socket.on('error',function(error){
                 console.log(error);
             });

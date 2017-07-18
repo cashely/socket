@@ -14,7 +14,7 @@ function getUserInfo(code,from){
                             return getUserInfoFromOpenId(result.openid)
                                     .then((oUserInfo)=>{
                                         if(!oUserInfo){
-                                            return getUserInfoFormWx(result.access_token,result.openid)
+                                            return getUserInfoFromWx(result.access_token,result.openid)
                                                     .then((_userInfo)=>{
                                                         _userInfo.openId = _userInfo.openid;
                                                         _userInfo.wxUsername = _userInfo.nickname;
@@ -62,7 +62,7 @@ function getOpenIdFromCode(code){
     })
 }
 
-function getUserInfoFormWx(accessToken,openId){
+function getUserInfoFromWx(accessToken,openId){
     return new Promise((resolve,reject)=>{
         request(`https://api.weixin.qq.com/sns/userinfo?access_token=${accessToken}&openid=${openId}&lang=zh_CN`,(err,response,body)=>{
             if(!err){
@@ -129,7 +129,6 @@ function updateCodeById(id,code,from){
         wxCode:code
     }
     if(!!from){
-      console.log('有from字段');
         updateUserCode.parent = from;
      return user.findOne().where({_id:from}).exec((err,result)=>{
             if(err){
@@ -145,12 +144,10 @@ function updateCodeById(id,code,from){
                     })
                 }
               return new Promise((resolve,reject)=>{
-                console.log(updateUserCode)
                 user.update({_id:id},{$set:updateUserCode},(err,_result)=>{
                   if(err){
                     reject(err);
                   }else {
-                    console.log('更新用户code');
                     resolve(result);
                   }
                 })
@@ -158,7 +155,6 @@ function updateCodeById(id,code,from){
             }
         })
     }else{
-      console.log('没有from字段');
         return new Promise((resolve,reject)=>{
             user.update({_id:id},{$set:updateUserCode},(err,result)=>{
                 if(err){
