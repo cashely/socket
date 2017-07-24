@@ -20,6 +20,7 @@ function getUserInfo(code,from){
                                                         _userInfo.wxUsername = _userInfo.nickname;
                                                         _userInfo.wxImgUrl = _userInfo.headimgurl;
                                                         return saveUserInfo({
+                                                               subScribe:result.subScribe,
                                                                wxId:result.openid,
                                                                wxName:_userInfo.nickname,
                                                                wxImage:_userInfo.headimgurl,
