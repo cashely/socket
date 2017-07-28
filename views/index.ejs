@@ -26,7 +26,7 @@
     </div>
 </div>
 <script>
-    var socket, id = "<%= id%>",parent= url2obj().from,wxImage='<%=wxImage%>';
+    var socket, id = '<%= userInfo._id%>',parent= url2obj().from,wxImage='<%=wxImage%>';
     var timer = null;
     function getToken() {
         return fetch('/token/user/'+id, {
@@ -93,7 +93,7 @@
                 //监听重新连接事件
                 socket.on('reconnect', function() {
                     console.log('断线重连!');
-//                    connect();
+                    connect();
                     window.location.reload();
                 })
 
@@ -138,7 +138,7 @@
             if (!!result) {
                 var dialog = "";
                 dialog += '<div class="dialog-box dialog-right">';
-                dialog += '<a href="/user?id="'+id+'  class="dialog-logo"><img src='+wxImage+' class="dialog-img"></a>'
+                dialog += '<a href=/user?id='+id+'  class="dialog-logo"><img src='+wxImage+' class="dialog-img"></a>'
                 dialog += '<div class="dialog-content"><span class="dialog-text">'+$message.val()+'</span></div>';
                 dialog += '</div>';
                 $('.historyMessage').append(dialog);
@@ -149,26 +149,25 @@
     }
     //发送完善个人资料
     function getUserInfoStatu() {
-        fetch('/getUserInfoStatu/' + id, {
+        return fetch('/getUserInfoStatu/' + id, {
             method: 'GET'
         })
-                .then(function(result) {
-                    return result.json()
-                })
-                .then(function(result) {
-                    if (result.statu == 1) {
-                        if (result.datas) {
-                            var dialog = "";
-                            dialog += '<div class="dialog-box dialog-left">';
-                            dialog += '<a href=/pharmacist?id='+parent+' class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a>';
-                            dialog += '<div class="dialog-content"><span class="triangle"><i class="triangle-content"></i></span>'
-                            dialog += '<span class="dialog-text">您好，从专业角度出发，为避免信息缺失造成风险管理遗漏，请您在个人中心完善资料，方便药师了解您的基础健康信息。</span>';
-                            dialog += '<a href=/userInfo?id='+id+' class="dialog-link"><img src="/images/icon-arrow.png" class="icon-arrow"> 完善个人资料</a>';
-                            dialog += '</div></div>';
-                            $('.fillUserInfo').append(dialog);
-                        }
-                    }
-                })
+        .then(function(result) {
+           return result.json()
+        }).then(function(result) {
+             if (result.statu == 1) {
+                  if (result.datas) {
+                      var dialog = "";
+                      dialog += '<div class="dialog-box dialog-left">';
+                      dialog += '<a href=/pharmacist?id=' + parent + ' class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a>';
+                      dialog += '<div class="dialog-content"><span class="triangle"><i class="triangle-content"></i></span>'
+                      dialog += '<span class="dialog-text">您好，从专业角度出发，为避免信息缺失造成风险管理遗漏，请您在个人中心完善资料，方便药师了解您的基础健康信息。</span>';
+                      dialog += '<a href=/userInfo?id=' + id + ' class="dialog-link"><img src="/images/icon-arrow.png" class="icon-arrow"> 完善个人资料</a>';
+                      dialog += '</div></div>';
+                      $('.fillUserInfo').append(dialog);
+                     }
+                  }
+             })
     }
     //渲染聊天记录
     function renderDialog(datas){
@@ -225,10 +224,10 @@
             })
              .then(function(result) {
                  //渲染完善信息
-                 getUserInfoStatu();
-                 if (result.datas.length == 0) return;
-                    //渲染聊天记录
-                    renderDialog(result.datas);
+                 getUserInfoStatu().then(function(){
+                     //渲染聊天记录
+                     renderDialog(result.datas);
+                 })
                     return to;
              })
 
@@ -243,8 +242,22 @@
     function clearInputListener(){
         clearInterval(timer);
     }
+
+    function getUserInfo(){
+        return fetch('/getUserInfo/'+id, {
+            method:'GET'
+        }).then(function(result){
+            return result.json();
+        }).then(function(result){
+            id=result.datas._id
+            if(result.statu == 1){
+                getHistoryMessage();
+            }
+        })
+    }
+
     connect();
-    getHistoryMessage();
+    getUserInfo();
     //解决ios下input输入文字被遮住
     $('#message').focus(setInputListener).blur(clearInputListener);
 </script>

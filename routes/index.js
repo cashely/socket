@@ -218,7 +218,7 @@ module.exports = (req,res,next)=>{
             .then((userInfo)=>{
                 console.log(userInfo,"用户信息");
                 date = moment(new Date).format('a|HH:mm').split('|');
-                res.render('index',{title:"聊天",userInfo:userInfo,id:userInfo._id,parent:userInfo.parent,wxImage:userInfo.wxImage,date:date});
+                res.render('index',{title:"聊天",userInfo:userInfo,parent:userInfo.parent,wxImage:userInfo.wxImage,date:date});
             })
     }
 }

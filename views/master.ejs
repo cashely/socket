@@ -400,7 +400,7 @@
                 var masterInfo = result.datas
                 $(".hospital-popup .phone").text(masterInfo.phone || "无");
                 $(".hospital-popup .serviceNum").text(!!(masterInfo.friends.length)?masterInfo.friends.length:0);
-                $(".hospital-popup .gradeNum").text(masterInfo.gradeNum);
+                $(".hospital-popup .gradeNum").text(masterInfo.star);
                 $(".hospital-popup .unit").val(masterInfo.unit || "无");
                 $(".hospital-popup .jobTitle").val(masterInfo.jobTitle || "无");
                 $(".hospital-popup").show();
