@@ -8,7 +8,7 @@
     <div class="dialog">
         <div class="fillUserInfo">
             <% if(!!userInfo.subScribe && userInfo.subScribe == 0){%>
-                <div class="dialog-box dialog-left" id="<%=userInfo.subScribe%>">
+                <div class="dialog-box dialog-left">
                     <a href="/pharmacist?id=5963587afcb13fb14c775b14" class="dialog-logo"><img src="/images/hospital.png" class="dialog-img"></a>
                     <div class="dialog-content">
                         <img src="/images/pharmacist-wx.jpg" class="dialog-wx">
@@ -93,7 +93,7 @@
                 //监听重新连接事件
                 socket.on('reconnect', function() {
                     console.log('断线重连!');
-                    connect();
+                    //connect();
                     window.location.reload();
                 })
 
