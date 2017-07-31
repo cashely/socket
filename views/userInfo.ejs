@@ -78,9 +78,9 @@
                 'Accept':'application/json',
                 'Content-Type':'application/json'
             }
-        }).then((result)=>{
+        }).then(function(result){
             return result.json();
-        }).then((result)=>{
+        }).then(function(result){
             if(result.statu == 1){
                 $(".select").hide();
                 $(".select-input").val( $(".gender .active").attr("name") == 0 ? "女" : "男").show();

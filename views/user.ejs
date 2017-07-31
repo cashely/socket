@@ -12,31 +12,89 @@
         </a>
         <ul class="card-list">
             <li class="card-item">诊疗卡管理 <a class="card-item-add">添加</a></li>
-            <% datas.crads.forEach(function(item,i){%>
-                <li class="card-item card-row">
-                    <span class="card-item-left">诊疗卡 <%=i+1%></span>
-                    <div class="card-item-content">
-                        <div class="card-row-item"><input type="text" class="card-row-item-input hospitalName" placeholder="请输入医院名称" value="<%=item.hospitalName%>"></div>
-                        <div class="card-row-item medicalCardId"><input type="text" class="card-row-item-input cradId" placeholder="请输入卡号" value="<%=item.id%>"></div>
-                    </div>
-                </li>
-            <%})%>
+            <!--<% datas.crads.forEach(function(item,i){%>-->
+                <!--<li class="card-item" style="width: 120%;overflow: hidden;position: relative">-->
+                    <!--<a href="javascript:void(0)" class="card-row">-->
+                        <!--<span class="card-item-left">诊疗卡 <%=i+1%></span>-->
+                        <!--<div class="card-item-content">-->
+                            <!--<div class="card-row-item"><input type="text" class="card-row-item-input hospitalName" placeholder="请输入医院名称" value="<%=item.hospitalName%>"></div>-->
+                            <!--<div class="card-row-item medicalCardId"><input type="text" class="card-row-item-input cradId" placeholder="请输入卡号" value="<%=item.id%>"></div>-->
+                        <!--</div>-->
+                        <!--<i class="delete">删除</i>-->
+                    <!--</a>-->
+                <!--</li>-->
+            <!--<%})%>-->
         </ul>
     </div>
 <script>
-    /*function getUserInfo(id){
-        fetch('/getUserInfo/'+id, {
-            method:'GET'
-        }).then((result)=>{
-            return result.json();
-        }).then((result)=>{
-            console.log( result)
-            if(result.statu == 1){
-                $(".user-img").attr("src",result.datas.wxImage);
-                $(".user-name").text(result.datas.wxName);
-            }
-        })
-    }*/
+    //侧滑显示删除按钮
+    function showDelete(){
+          var expansion = null; //是否存在展开的list
+          var container = document.querySelectorAll('.card-list .card-row');
+          for(var i = 0; i < container.length; i++){
+              var x, y, X, Y, swipeX, swipeY;
+              container[i].addEventListener('touchstart', function(event) {
+                  x = event.changedTouches[0].pageX;
+                  y = event.changedTouches[0].pageY;
+                  swipeX = true;
+                  swipeY = true ;
+                  if(expansion){   //判断是否展开，如果展开则收起
+                      $(expansion).removeClass('swipeleft');
+                  }
+              });
+              container[i].addEventListener('touchmove', function(event){
+                  X = event.changedTouches[0].pageX;
+                  Y = event.changedTouches[0].pageY;
+                  // 左右滑动
+                  if(swipeX && Math.abs(X - x) - Math.abs(Y - y) > 0){
+                      // 阻止事件冒泡
+                      event.stopPropagation();
+                      if(X - x > 10){   //右滑
+                          event.preventDefault();
+                          $(expansion).removeClass('swipeleft');    //右滑收起
+                      }
+                      if(x - X > 10){   //左滑
+                          event.preventDefault();
+                          $(this).addClass('swipeleft');   //左滑展开
+                          expansion = this;
+                      }
+                      swipeY = false;
+                  }
+                  // 上下滑动
+                  if(swipeY && Math.abs(X - x) - Math.abs(Y - y) < 0) {
+                      swipeX = false;
+                  }
+              });
+          }
+      }
+    //加载页面信息
+    function getUserInfo(){
+        return fetch('/getUserInfo/'+url2obj().id, {
+                    method:'GET'
+                }).then(function(result){
+                    return result.json();
+                }).then(function(result){
+                    console.log(result)
+                    if(result.statu == 1){
+                        var crads = "";
+                        result.datas.crads.forEach(function(item,i){
+                            crads+= '<li class="card-item" style="width: 120%;overflow: hidden;position: relative">'
+                            crads+= '<a href="javascript:void(0)" class="card-row">'
+                            crads+='<span class="card-item-left">诊疗卡'+(i+1)+'</span>'
+                            crads+='<div class="card-item-content">'
+                            crads+='<div class="card-row-item"><input type="text" class="card-row-item-input hospitalName" placeholder="请输入医院名称" value="'+item.hospitalName+'" disabled></div>'
+                            crads+='<div class="card-row-item medicalCardId"><input type="text" class="card-row-item-input cradId" placeholder="请输入卡号" value="'+item.id+'" disabled></div>'
+                            crads+='</div>'
+                            crads+='<i class="delete">删除</i>'
+                            crads+='</a>'
+                            crads+='</li>'
+                        })
+                        $('.card-list').append(crads);
+                    }
+                })
+    }
+
+    //向后台添加诊疗卡信息
     function addCrad(id){
         fetch('/addCrad/'+id, {
             method:'POST',
@@ -49,37 +107,60 @@
                 'Content-Type':'application/json'
             },
             credentials: "include"
-        }).then((result)=>{
+        }).then(function(result){
             return result.json();
-        }).then((result)=>{
-            console.log( result)
+        }).then(function(result){
             if(result.statu == 1){
                 $(".card-item-add").text("添加");
             }
         })
     }
 
+    //添加诊疗卡方法
     $(".card-item-add").click(function(){
         if ($(this).hasClass("active")){
             if($(".card-list:last .cradId").val() != "" && $(".card-list:last .hospitalName").val()  != ""){
                 $(this).removeClass("active");
                 addCrad(url2obj().id);
+            }else{
+                $(this).removeClass("active");
+                $(".card-item-add").text("添加");
             }
         }else{
             $(this).addClass("active");
             var card="";
-            card +='<ul class="card-list"><li class="card-item card-row"><span class="card-item-left">';
-            card +='诊疗卡'+1;
-            card +='</span>';
+            card +='<ul class="card-list"><li class="card-item card-row">';
+            card +='<span class="card-item-left">诊疗卡'+$('.card-list .card-item').length+'</span>';
             card +='<div class="card-item-content">';
             card +='<div class="card-row-item"><input type="text" class="card-row-item-input hospitalName" placeholder="请输入医院名称"></div>';
             card +='<div class="card-row-item medicalCardId"><input type="text" class="card-row-item-input cradId" placeholder="请输入卡号"></div>';
-            card +='</div> </li> </ul>';
+            card +='</div> ';
+            card +='</li> </ul>';
             $(".container").append(card);
             $('.container').scrollTop($('.container')[0].scrollHeight);
             $(this).text("保存");
         }
     })
-    /*getUserInfo(url2obj().id)*/
+
+    //删除诊疗卡方法
+    $(".card-row .delete").click(function(){
+        fetch('sss', {
+            method:'POST',
+            headers:{
+                'Accept':'application/json',
+                'Content-Type':'application/json'
+            },
+            credentials: "include"
+        }).then(function(result){
+            return result.json();
+        }).then(function(result){
+            if(result.statu == 1){
+                $(this).parents('.card-row').remove();
+            }
+        })
+    })
+    getUserInfo().then(function(){
+        showDelete();
+    });
 </script>
 <% include ./common/footer %>

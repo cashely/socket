@@ -35,7 +35,7 @@ function getUserInfo(code,from){
                                                            })
                                                     })
                                         }else{
-                                          console.log('通过openId更新code',oUserInfo);
+                                            console.log('通过openId更新code',oUserInfo);
                                             return updateCodeById(oUserInfo._id,code,from)
                                                     .then((result)=>{
                                                         return oUserInfo;
@@ -48,7 +48,6 @@ function getUserInfo(code,from){
                 }
             })
 }
-
 
 function getOpenIdFromCode(code){
     return new Promise((resolve,reject)=>{
@@ -119,6 +118,7 @@ function getUserInfoByCode(code){
                 if(err){
                     throw new Error()
                 }else{
+                    console.log(result,"查询根据code查询用户表");
                     return result;
                 }
             })
@@ -161,7 +161,7 @@ function updateCodeById(id,code,from){
                 if(err){
                   reject(err);
                 }else {
-                  console.log(result,"resultupdateCodeById")
+                  console.log(result,"resultupdateCodeById");
                   resolve(result);
                 }
             })
@@ -215,10 +215,10 @@ module.exports = (req,res,next)=>{
         res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wx.appId}&redirect_uri=${url+req.originalUrl}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect`);
     }else{
         getUserInfo(req.query.code,req.query.from)
-
             .then((userInfo)=>{
+                console.log(userInfo,"用户信息");
                 date = moment(new Date).format('a|HH:mm').split('|');
-                res.render('index',{title:"聊天",id:userInfo._id,parent:userInfo.parent,wxImage:userInfo.wxImage,date:date});
+                res.render('index',{title:"聊天",userInfo:userInfo,parent:userInfo.parent,wxImage:userInfo.wxImage,date:date});
             })
     }
 }
