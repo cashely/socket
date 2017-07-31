@@ -325,7 +325,11 @@
                 }
                 item +='</div><div class="newInfo">';
                 if(!!ele.lastMessage && !! ele.lastMessage.message){
-                    item +=ele.lastMessage.message ;
+                    if(ele.lastMessage.message == 'close'){
+                        item += '发送评价请求';
+                    }else{
+                        item +=ele.lastMessage.message ;
+                    }
                 }
                 item +=' </div></div></div>';
             }
@@ -412,15 +416,16 @@
     function sendMasterMessage(type){
         var _m;
         _m = $(".sendInfo-content").val();
-        if(!type && _m == ''){
-            return false;
-        }
         if(!socket){
             // alert('还没有建立连接呢亲爱的!')
             return ;
         }
         if(!!type){
             _m = 'close';
+        }else{
+            if(!type && _m == '' || /^[ ]+$/.test(_m) || /^\n+$/.test(_m)){
+                return false;
+            }
         }
         socket.emit('message',{to:$(".chat-list .active").attr("id"),info:_m},function(result){
             console.log(result)
@@ -430,16 +435,18 @@
                     dialog +='<div class="chatContent-box chatContent-right"><a onClick="showMasterInfo()" href="javascript:void(0)" class="chatContent-logo hospital-logo"> <img src="/images/hospital.png" class="chatContent-img"> </a> <div class="chatContent-content"><span class="triangle"><i class="triangle-content"></i></span> <span class="chatContent-text">' ;
                     dialog += '感谢您的咨询！希望我们的服务能解决您的问题。赶紧去给黄药师的服务评分吧！';
                     dialog += ' <a class="chatContent-link"> <img src="/images/icon-arrow.png" class="icon-arrow">去评分 </a></span> </div> </div>';
+                    $(".chat-list .active .newInfo").text('发送评价请求');
                 }else{
                     dialog+='<div class="chatContent-box chatContent-right"><a onClick="showMasterInfo()" href="javascript:void(0)" class="chatContent-logo hospital-logo">';
                     dialog+='<img src="<% if(!datas.wxImage){%>/images/hospital.png<%}else{%><%=datas.wxImage %><%}%>"class="chatContent-img">';
                     dialog+= '</a> <div class="chatContent-content"> <span class="triangle"><i class="triangle-content"></i></span> <span class="chatContent-text">';
                     dialog+=   document.getElementById('message').value;
                     dialog+= '</span> </div> </div>'
+                    $(".sendInfo-content").val("");
+                    $(".chat-list .active .newInfo").text($('#message').val());
                 }
                 $('.chatContent').append(dialog);
                 $('.chatContent').scrollTop($('.chatContent')[0].scrollHeight);
-                $(".sendInfo-content").val("")
             }
         })
     }
