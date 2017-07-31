@@ -95,7 +95,7 @@ function updateMasterFriends(id,whoId){
         }else{
             if(!!result){
                 if(result.friends.indexOf(whoId)=== -1){
-                    result.friends.push(whoId);
+                    result.friends.unshift(whoId);
                     result.markModified('friends');
                     result.save((err,_r)=>{
                         if(err){
