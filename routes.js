@@ -27,6 +27,8 @@ module.exports = (app)=>{
 
     //添加诊疗卡号
     app.post('/addCrad/:id',require('./routes/users').addCrad);
+    //删除诊疗卡号
+    app.put('/crad/:id',require('./routes/users').deleteCrad);
 
     app.put('/addMaster',require('./routes/master').add);
 

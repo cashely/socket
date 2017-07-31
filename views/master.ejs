@@ -320,7 +320,7 @@
                 }else{
                     item +='<span class="user-name">'+ele.wxName+'</span>';
                 }
-                if(!!ele.lastMessage && !!ele.lastMessage.date.lastMessage){
+                if(!!ele.lastMessage && !!ele.lastMessage.date.length){
                     item += '<span class="chat-time">'+(ele.lastMessage.date[0] == "pm"?"下午":"上午")+ele.lastMessage.date[1]+'</span>';
                 }
                 item +='</div><div class="newInfo">';
