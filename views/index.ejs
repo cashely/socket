@@ -27,7 +27,7 @@
 </div>
 <script>
     var socket, id = '<%= userInfo._id%>',parent= url2obj().from,wxImage='<%=wxImage%>';
-    var timer = null;
+    var timer = null,sendType = false;
     function getToken() {
         return fetch('/token/user/'+id, {
             method: 'GET'
@@ -128,14 +128,16 @@
             return;
         }
         var $message = $('#message');
-        if($message.val() == ''|| /^[ ]+$/.test($message.val())){
+        if($message.val() == ''|| /^[ ]+$/.test($message.val()) || sendType){
             return;
         }
+        sendType = true
         socket.emit('message', {
             to: parent,
             info:$message.val()
         }, function(result) {
             if (!!result) {
+                sendType = false;
                 var dialog = "";
                 dialog += '<div class="dialog-box dialog-right">';
                 dialog += '<a href=/user?id='+id+'  class="dialog-logo"><img src='+wxImage+' class="dialog-img"></a>'
