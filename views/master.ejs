@@ -103,7 +103,7 @@
                 <div class="sendInfo-toolbar">
                     <div class="sendEvaluation">发送评价请求</div>
                 </div>
-                <textarea name="" id="message" class="sendInfo-content"></textarea>
+                <textarea id="message" class="sendInfo-content"></textarea>
                 <div class="btn-sendInfo" onClick="sendMasterMessage()">发送</div>
             </div>
         </div>
@@ -160,7 +160,7 @@
                         dialog+='<div class="chatContent-box chatContent-left"><a onClick="showUserInfo()" href="javascript:void(0)" class="chatContent-logo user-logo">';
                         dialog+='<img src='+message.user.image+' class="chatContent-img">';
                         dialog+= '</a> <div class="chatContent-content"><span class="triangle"><i class="triangle-content"></i></span>  <span class="chatContent-text">';
-                        dialog+=   message.info;
+                        dialog+=  message.info;
                         dialog+= '</span> </div> </div>';
                         $('.chatContent').append(dialog);
                         $('.chatContent').scrollTop($('.chatContent')[0].scrollHeight);
@@ -168,6 +168,8 @@
                     for(var i=0;i<$(".chat-list .list-item").length;i++){
                         if($(".chat-list .list-item:eq("+i+")").attr("id") == message.user._id){
                             $(".chat-list .list-item:eq("+i+") .newInfo").text(message.info);
+                            $(".chat-list .list-item:eq("+i+") .list-imgBox").addClass("icon-newInfo");
+                            //$(".chat-list").prepend($(".chat-list .list-item:eq("+i+")"));
                             break;
                         }
                     }
@@ -186,7 +188,7 @@
                 //下线
                 socket.on('disconnect', function(message) {
                     socket = null
-                    console.log(message,'disconnect')
+                    console.log($(".chat-list .list-item"),'disconnect')
                 });
                 //监听其他用户登录事件
 
@@ -203,7 +205,7 @@
                         return result.json();
                     }).then(function(masterInfo){
                         if(masterInfo.statu == 1){
-                            var lists = masterInfo.datas.friends,newArr = [];
+                            var  lists = masterInfo.datas.friends, newArr = []
                             list.forEach(function(ele,i){
                                 if(hasId(lists,ele._id,masterInfo.datas._id)){
                                     newArr.push(ele._id);
@@ -313,7 +315,7 @@
         $(datas).each(function(index,ele){
             if(ele._id != id){
                 item += '<div onClick="chatList(this)" class="list-item" id='+ele._id+'>';
-                item +='<div class="list-imgBox icon-newInfo"><img src='+ele.wxImage+' onClick="showUserInfo(this)" class="list-img"></div>';
+                item +='<div class="list-imgBox"><img src='+ele.wxImage+' onClick="showUserInfo(this)" class="list-img"></div>';
                 item +='<div class="list-item-content"><div class="user">';
                 if(!!ele.mark){
                     item +='<span class="user-name">'+ele.mark+'</span>';
@@ -454,8 +456,15 @@
     connect();
 </script>
 <script>
+    //按回车键发送信息
+    $('#message').bind("keydown",function(event){
+        if(event.which == 13){
+            sendMasterMessage();
+        }
+    })
     function chatList(e) {
         if ($(e).hasClass("active")) return false;
+        $(e).find('.list-imgBox').removeClass("icon-newInfo")
         $('.popup').hide();
         getHistoryMessage($(e).attr("id"),$(e).find('.list-img').attr("src"));
         $(e).addClass("active").siblings().removeClass("active");
