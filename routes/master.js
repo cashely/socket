@@ -110,15 +110,19 @@ function getUserList(ids,masterId){
               throw new Error(err);
             }else{
               let _userInfo = !!userInfo ? userInfo.toObject() :{};
-              chat.findOne().where({$or:[{from:id,to:masterId},{to:id,from:masterId}]}).sort({date:-1}).exec((err,message)=>{
+              chat.find({}).where({$or:[{from:id,to:masterId},{to:id,from:masterId}]}).exec((err,message)=>{
                 if(err){
                   reject(err)
                 }else{
-                  if(!!message){
-                    message = message.toObject();
-                    message.date = moment(message.date).format('a|HH:mm').split('|');
+                  let _m = message;
+                  if(!!_m.length){
+                    console.log(_m.length);
+                    _m = _m.slice(-1)[0];
+                    _m = _m.toObject();
+                    _m.date = moment(_m.date).format('a|HH:mm').split('|');
                   }
-                  _userInfo.lastMessage = message;
+                  console.log(_m);
+                  _userInfo.lastMessage = _m;
                   resolve(_userInfo);
                 }
               })
@@ -137,18 +141,6 @@ module.exports = {
         getFriends(req.query.id)
           .then((result)=>{
               res.locals.getFriends = result;
-              //return chat
-              //        .find()
-              //        .where({$or:[{from:req.query.id,to:result._id},{from:result._id,to:req.query.id}]})
-              //        .order({date:1})
-              //        .limit(1)
-              //        .exec((err,result)=>{
-              //          if(err){
-              //            throw new Error(err);
-              //          }else{
-              //            return result;
-              //          }
-              //        })
           })
           .then((_result)=>{
               res.locals.lastMessage = _result;
@@ -265,4 +257,4 @@ module.exports = {
             })
         })
     }
-}
+};

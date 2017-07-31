@@ -5,7 +5,7 @@ const Schema = new mongoose.Schema({
     message:String,
     date:{
         type:Date,
-        default:new Date()
+        default:Date.now()
     },
     msgType:{
         type:Number,//0-不显示 1-正常

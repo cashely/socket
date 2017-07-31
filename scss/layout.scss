@@ -17,6 +17,25 @@
     display: table;
   }
 }
+/**********masterList 药师列表**********/
+.masterList{
+  background: #fff;
+  .item{
+    display: inline-block;
+    width: 100%;
+    padding: pxToRem(15);
+    overflow: hidden;
+    border: 1px solid #DEDEDE;
+    .item-img{
+      vertical-align: middle;
+      width: pxToRem(80)
+    }
+    .name{
+      margin-left: pxToRem(24);
+      font-size: pxToRem(28);
+    }
+  }
+}
 /**********home 患者聊天**********/
 .top{
   text-align: center;
@@ -42,6 +61,9 @@
   overflow-y: scroll;
   left: 0;
   right: 0;
+  .fillUserInfo{
+    margin-bottom: pxToRem(30);
+  }
   .dialog-box{
     overflow: hidden;
     +.dialog-box{
@@ -65,14 +87,30 @@
       border-radius: pxToRem(16);
       max-width: pxToRem(440);
       position: relative;
-      &:before{
-        position: absolute;
+      //&:before{
+      //  position: absolute;
+      //  display: block;
+      //  width: 0;
+      //  height: 0;
+      //  content: '';
+      //  border-style: solid;
+      //  top: pxToRem(26);
+      //}
+      .triangle{
         display: block;
-        width: 0;
-        height: 0;
-        content: '';
         border-style: solid;
+        position: absolute;
+        border-color: transparent #DCDCDC;
         top: pxToRem(26);
+        .triangle-content{
+          position: absolute;
+          border-style: solid;
+          border-color: transparent #fff;
+        }
+      }
+      .dialog-wx{
+        max-width: 100%;
+        margin-bottom: pxToRem(30);
       }
       .dialog-link{
         display: block;
@@ -93,11 +131,20 @@
       margin-right: pxToRem(24);
     }
     .dialog-content{
-        &:before{
-          left: pxToRem(-16);
+        //&:before{
+        //  left: pxToRem(-16);
+        //  border-width: pxToRem(16) pxToRem(16) pxToRem(16) 0;
+        //  border-color: transparent #fff;
+        //}
+      .triangle{
+        left: pxToRem(-16);
+        border-width: pxToRem(16) pxToRem(16) pxToRem(16) 0;
+        .triangle-content{
+          top:  pxToRem(-16);
+          left: pxToRem(2);
           border-width: pxToRem(16) pxToRem(16) pxToRem(16) 0;
-          border-color: transparent #fff;
         }
+      }
     }
   }
   .dialog-right{
@@ -107,10 +154,19 @@
     }
     .dialog-content{
       float: right;
-      &:before{
-        right:  pxToRem(-16);
-        border-width:  pxToRem(16) 0 pxToRem(16) pxToRem(16);
-        border-color: transparent #fff;
+      //&:before{
+      //  right:  pxToRem(-16);
+      //  border-width:  pxToRem(16) 0 pxToRem(16) pxToRem(16);
+      //  border-color: transparent #fff;
+      //}
+      .triangle{
+        right: pxToRem(-16);
+        border-width: pxToRem(16) 0 pxToRem(16) pxToRem(16);
+        .triangle-content{
+          top:  pxToRem(-16);
+          right: pxToRem(2);
+          border-width: pxToRem(16) 0 pxToRem(16) pxToRem(16);
+        }
       }
     }
   }
@@ -157,7 +213,11 @@
     height: pxToRem(70);
     line-height: pxToRem(70);
     width: 10%;
+    padding: 0;
+    border: 0;
+    outline: 0;
     text-align: center;
+    background: none;
   }
 }
 /**********user 个人信息**********/
@@ -205,12 +265,16 @@
       color: #018B87;
     }
   }
+  .swipeleft{transform:translateX(-15%);-webkit-transform:translateX(-15%);}
   .card-row{
     display: flex;
     display: -webkit-flex;
     flex-wrap: wrap;
     -webkit-flex-wrap: wrap;
     padding-right: 0;
+    &:hover{
+      background: #fff;
+    }
     .card-item-left{
       width: pxToRem(184);
     }
@@ -265,6 +329,21 @@
           background-size: 100% 100%;
         }
       }
+    }
+    .delete{
+      position: absolute;
+      bottom: pxToRem(-32);
+      top: pxToRem(-32);
+      right: pxToRem(32);
+      width: 15%;
+      text-align: center;
+      background: #E2421B;
+      color: #fff;
+      line-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-style: normal;
     }
   }
 }
@@ -428,7 +507,7 @@
           background-size: 100% 100%;
         }
       }
-      .savePassword{
+      .saveUserLogin{
         display: inline-block;
         margin-top: 21px;
         width: 100%;
@@ -455,6 +534,10 @@
   }
 }
 .footer{
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 0;
   font-size: 12px;
   height: 40px;
   line-height: 40px;
@@ -464,9 +547,13 @@
 }
 /**********chat 聊天界面**********/
 .chat{
+  background: #fff;
+  overflow: hidden;
+  height:auto;
   .chat-top{
     background: #fff;
-    position: relative;
+    position: absolute;
+    width: 100%;
     text-align: center;
     font-size: 16px;
     height: 64px;
@@ -511,9 +598,25 @@
           padding: 15px;
           overflow: hidden;
           border: 1px solid #DEDEDE;
-          .list-img{
+          .list-imgBox{
             float: left;
             width: 40px;
+            position: relative;
+            .list-img{
+              width:100%;
+            }
+          }
+          .icon-newInfo{
+           &:before{
+             display: inline-block;
+             width: 10px;
+             height: 10px;
+             position: absolute;
+             background: red;
+             border-radius: 50%;
+             top: -5px;
+             right: -5px;
+           }
           }
           .list-item-content{
             margin-left: 50px;
@@ -528,6 +631,14 @@
             .newInfo{
               margin-top: 9px;
               color: #999999;
+              white-space: nowrap;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 1;
+              overflow: hidden;
+              width: 100%;
+              text-overflow: ellipsis;
+              display: inline-block;
             }
           }
         }
@@ -581,14 +692,16 @@
               border: 1px solid #DCDCDC;
               border-radius: 8px;
               max-width: 242px;
-              &:before{
-                position: absolute;
+              .triangle{
                 display: block;
-                width: 0;
-                height: 0;
-                content: '';
                 border-style: solid;
-                top: 14px;
+                position: absolute;
+                border-color: transparent #DCDCDC;
+                .triangle-content{
+                  position: absolute;
+                  border-style: solid;
+                  border-color: transparent #fff;
+                }
               }
               .chatContent-link{
                 display: block;
@@ -606,10 +719,15 @@
               margin-right: 20px;
             }
             .chatContent-content{
-              &:before{
+              .triangle{
+                top: 12px;
                 left: -8px;
                 border-width: 8px 8px 8px 0;
-                border-color: transparent #fff;
+                .triangle-content{
+                  top: -8px;
+                  left: 1px;
+                  border-width: 8px 8px 8px 0;
+                }
               }
             }
           }
@@ -620,10 +738,15 @@
             }
             .chatContent-content{
               float: right;
-              &:before{
+              .triangle{
+                top: 12px;
                 right: -8px;
                 border-width: 8px 0 8px 8px;
-                border-color: transparent #fff;
+                .triangle-content{
+                  top: -8px;
+                  right: 1px;
+                  border-width: 8px 0 8px 8px;
+                }
               }
             }
           }
