@@ -104,3 +104,9 @@
         cradId:required,
         hospitalName:required
     }
+15、删除诊疗卡
+    /card/:id
+    method:PUT,
+    params:{
+        cradId:required
+    }

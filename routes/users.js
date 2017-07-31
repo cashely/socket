@@ -172,6 +172,21 @@ module.exports = {
             })
         })
     },
+    deleteCrad:(req,res,next)=>{
+        user.update({"_id":req.params.id},{$pull:{type:{id:req.body.cradId}}},(error,result)=>{
+            if(error){
+                res.json({
+                    statu:0,
+                    msg:error
+                })
+            }else{
+                res.json({
+                    statu:1,
+                    msg:'删除成功!'
+                })
+            }
+        })
+    },
     statu:(req,res,next)=>{
         getUserFromDb(req.params.id)
         .then((result)=>{
