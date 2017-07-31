@@ -320,7 +320,7 @@
                 }else{
                     item +='<span class="user-name">'+ele.wxName+'</span>';
                 }
-                if(!!ele.lastMessage.length){
+                if(!!ele.lastMessage && !!ele.lastMessage.date.lastMessage){
                     item += '<span class="chat-time">'+(ele.lastMessage.date[0] == "pm"?"下午":"上午")+ele.lastMessage.date[1]+'</span>';
                 }
                 item +='</div><div class="newInfo">';
@@ -441,9 +441,9 @@
                     dialog+='<img src="<% if(!datas.wxImage){%>/images/hospital.png<%}else{%><%=datas.wxImage %><%}%>"class="chatContent-img">';
                     dialog+= '</a> <div class="chatContent-content"> <span class="triangle"><i class="triangle-content"></i></span> <span class="chatContent-text">';
                     dialog+=   document.getElementById('message').value;
-                    dialog+= '</span> </div> </div>'
-                    $(".sendInfo-content").val("");
+                    dialog+= '</span> </div> </div>';
                     $(".chat-list .active .newInfo").text($('#message').val());
+                    $("#message").val("");
                 }
                 $('.chatContent').append(dialog);
                 $('.chatContent').scrollTop($('.chatContent')[0].scrollHeight);

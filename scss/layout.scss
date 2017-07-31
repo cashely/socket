@@ -208,11 +208,11 @@
     -webkit-appearance: none;
   }
   .btn-send{
-    font-size: pxToRem(24);
+    font-size: pxToRem(30);
     border-radius: pxToRem(8);
     height: pxToRem(70);
     line-height: pxToRem(70);
-    width: 10%;
+    width: 15%;
     padding: 0;
     border: 0;
     outline: 0;
@@ -437,6 +437,9 @@
 .login-content{
   background: #fff;
   height: 474px;
+  min-width: 1000px;
+  max-width: 1366px;
+  margin: 0 auto;
   //padding: pxToRem(88) pxToRem(86) pxToRem(86) pxToRem(62);
   background: url("../images/login-content-left.png") 62px center no-repeat;
   background-color: #fff;
