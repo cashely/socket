@@ -85,7 +85,7 @@
                             crads+='<div class="card-row-item"><input type="text" class="card-row-item-input hospitalName" placeholder="请输入医院名称" value="'+item.hospitalName+'" disabled></div>'
                             crads+='<div class="card-row-item medicalCardId"><input type="text" class="card-row-item-input cradId" placeholder="请输入卡号" value="'+item.id+'" disabled></div>'
                             crads+='</div>'
-                            crads+='<i class="delete">删除</i>'
+                            crads+='<i class="delete" _id='+item._id+'>删除</i>'
                             crads+='</a>'
                             crads+='</li>'
                         })
@@ -143,9 +143,9 @@
     })
 
     //删除诊疗卡方法
-    $(".card-row .delete").click(function(){
-        fetch('sss', {
-            method:'POST',
+    $(".card-row .delete").on('touchend',function(e){
+        fetch('/card/'+url2obj().id+'?cradId='+$(this).attr('_id'), {
+            method:'PUT',
             headers:{
                 'Accept':'application/json',
                 'Content-Type':'application/json'
@@ -155,10 +155,14 @@
             return result.json();
         }).then(function(result){
             if(result.statu == 1){
-                $(this).parents('.card-row').remove();
+                e.preventDefault();
+                $(this).parents('.card-row').slideUp('fast', function() {
+                    $(this).remove();
+                })
             }
         })
     })
+
     getUserInfo().then(function(){
         showDelete();
     });
